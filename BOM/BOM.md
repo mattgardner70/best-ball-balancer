@@ -6,7 +6,7 @@ About **$229** in parts at the listed prices, plus the three motors and two moto
 
 | Part | Qty used | Buy | Price | Where |
 |---|---|---|---|---|
-| GA37-520 12 V gearmotor, 30:1 (~360 rpm), hall encoder | 3 | 3 | — | [any GA37-520 30:1 with encoder](https://www.amazon.com/s?k=GA37-520+30%3A1+encoder+12V) |
+| GA37-520 (JGB37-520) 12 V gearmotor with hall encoder, 333 rpm | 3 | 3 | — | [Sileduove B0H4TS383B](https://www.amazon.com/dp/B0H4TS383B) |
 | 6 mm rigid flange coupling, 22 mm flange, 4-hole | 3 | 1 pack of 4 | $6.98 | [Amazon B08334N261](https://www.amazon.com/dp/B08334N261) |
 | Shoulder bolt, 4 × 10 mm shoulder, M3 × 6 thread (elbow pin) | 3 | 1 pack of 12 | $7.97 | [uxcell B0DP71MPP7](https://www.amazon.com/dp/B0DP71MPP7) |
 | Flanged bronze bushing, 4 mm bore × 8 mm OD (elbow) | 3 | 1 pack of 6 | $5.99 | [HARFINGTON B0CGDT9YYW](https://www.amazon.com/dp/B0CGDT9YYW) |
