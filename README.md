@@ -25,8 +25,6 @@ Most ball balancers use hobby servos or steppers, and you can hear them from acr
 - **A damped enclosure:** a Voronoi lattice shell with an optional solid liner that hides the mechanism and soaks up what noise is left.
 - **A soft power button** (Pololu pushbutton switch) instead of a clicking toggle.
 
-![With the optional solid liner under the shell](images/hero_liner.png)
-
 ## How it works
 
 ![Inside: three motors, three arms, one plate](images/mechanism.png)
