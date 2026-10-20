@@ -43,7 +43,7 @@ Press **36 M3 inserts** with a soldering iron and insert tip, flush with the sur
 - **Arms:** 1 in each elbow tip.
 - **Rods:** 1 in each top face.
 
-The MDD3A standoffs on the driver holder don't take inserts: their M2.5 screws tap straight into the plastic.
+The MDD3A standoffs on the driver holder don't take inserts: their M3 screws tap straight into the plastic.
 
 ## 3. Mount the motors
 
@@ -74,7 +74,7 @@ Each leg goes together on its motor, in this order:
 Every board has its own printed holder, so you can mount and wire each board on the bench, then screw the holder down with **M3 × 8** screws into the pads on the base plate.
 
 1. **Arduino Mega:** screw it to its holder with six **M3 × 6** screws, USB end toward the back. It stands 9 mm off the floor so the plugs on its bottom header have room. Use a **right-angle USB-B cable**: there isn't room for a straight plug with the shell on.
-2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M2.5 × 8** screws each: terminal blocks up, input header down.
+2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M3 × 8** screws each (they self-tap into the printed posts): terminal blocks up, input header down.
 3. **Power switch:** stick the **Pololu** board onto its holder plate with double-sided foam tape, terminals facing out, and loop a zip tie through the two slots and across the board. It sits by the left wall, facing the centre, close to the power jack.
 4. **Buck converter:** drop it into its tray and strap it down with a zip tie through the two slots.
 

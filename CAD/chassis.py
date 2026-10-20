@@ -49,7 +49,7 @@ MEGA = (101.6, 53.3)
 MEGA_HOLES = [(14.0, 2.5), (15.3, 50.7), (66.1, 7.6), (66.1, 35.5), (90.2, 50.7), (96.5, 2.5)]  # (I) Arduino drawing
 # Two Cytron MDD3A drivers, back to back on one upright wall in the front-right corner, beside the Mega.
 MDD3A = (48.26, 41.66)               # board: terminals-to-header length, width (datasheet)
-MDD3A_HOLES = (43.18, 36.58)         # hole spacing, same axes; 3 mm holes -> M2.5 x 8 screws
+MDD3A_HOLES = (43.18, 36.58)         # hole spacing, same axes; 3 mm holes -> M3 x 8, self-tapping into 2.5 mm pilots
 DRIVER_WALL_X = 76.5                 # wall centre line (runs along y)
 DRIVER_Y = -72.5                     # boards' centre along y
 DRIVER_STANDOFF = 6.0
@@ -255,7 +255,7 @@ def _driver_tabs():
 
 
 def driver_mount() -> cq.Workplane:
-    """Upright wall carrying both MDD3As back to back, one on each face, on M2.5 standoffs (screws tap
+    """Upright wall carrying both MDD3As back to back, one on each face, on standoffs (M3 screws tap
     into the posts). Terminal blocks along the top edge, input header along the bottom, MEGA_LIFT above
     the plate like the Mega. Four screw tabs. World position; print standing up."""
     L, W = MDD3A
@@ -270,7 +270,7 @@ def driver_mount() -> cq.Workplane:
             for dz in (-hl / 2, hl / 2):
                 y, z = DRIVER_Y + dy, z0 + L / 2 + dz
                 post = (cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(3.0).extrude(side * DRIVER_STANDOFF)
-                        .cut(cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(1.05).extrude(side * (DRIVER_STANDOFF + 0.1))))
+                        .cut(cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(1.25).extrude(side * (DRIVER_STANDOFF + 0.1))))
                 wall = wall.union(post)
     for x, y in _driver_tabs():                     # tabs on both sides, joined to the wall by a web
         wall = wall.union(cq.Workplane("XY").workplane(offset=PLATE_T).center((x + DRIVER_WALL_X) / 2, y)

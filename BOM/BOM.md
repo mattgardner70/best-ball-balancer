@@ -46,7 +46,6 @@ About **$297** in parts at the listed prices, motors and motor drivers included.
 | M3 × 5.7 heat-set inserts | 36 | 1 pack of 100 | $9.99 | $9.99 | [ruthex B08BCRZZS3](https://www.amazon.com/dp/B08BCRZZS3) |
 | M3 socket-head screw kit with nuts | see below | 1 kit | $9.99 | $9.99 | [Fgruh B0FG2BRXL3](https://www.amazon.com/dp/B0FG2BRXL3) |
 | M3 × 16 grub screws (rod studs) | 3 | 1 pack of 50 | $7.89 | $7.89 | [uxcell B01AXVSM6O](https://www.amazon.com/dp/B01AXVSM6O) |
-| M2.5 × 8 screws (MDD3A mounts) | 8 | 1 pack | — | — | any |
 
 ### Which screw goes where
 
@@ -54,10 +53,9 @@ About **$297** in parts at the listed prices, motors and motor drivers included.
 |---|---|---|
 | M3 × 12 | 12 | Motor straps into the saddle inserts |
 | M3 × 12 | 12 | Flange couplings onto the arms |
-| M3 × 8 | 12 | Board holders onto the base plate (Mega 6, drivers 4, switch 2) |
+| M3 × 8 | 20 | Board holders onto the base plate (Mega 6, drivers 4, switch 2), and the two MDD3As onto their holder (8, self-tapping into the printed posts) |
 | M3 × 6 | 6 | Arduino Mega onto its holder |
 | M3 nut | 3 | Jam nuts on the rod studs |
-| M2.5 × 8 | 8 | MDD3A boards onto their standoffs (they self-tap into the printed posts) |
 
 **Heat-set inserts (36):** motor saddles 12, holder pads on the base plate 12, Mega holder standoffs 6, rod tops 3, arm elbows 3.
 
