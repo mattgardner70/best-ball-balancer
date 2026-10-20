@@ -14,15 +14,8 @@ The Wago buses are colour-coded in the video: **dark red** = +12 V, **orange** =
 | File | What it is |
 |---|---|
 | [`wiring.pdf`](wiring.pdf) | **Print this.** The diagram: one page each for power (every Wago port), motors and encoders, and the touch panel, buttons and soft power, then a wire list by part. |
-| [`wiring.html`](wiring.html) | The same diagram as an interactive web page. Download it and open it in a browser: hover any wire to highlight its two ends. |
-| [`wiring.py`](wiring.py) | The source. One list, `CONNECTIONS`, holds every wire: from, to, and wire type. Running it draws `wiring.html`; the PDF is printed from that page, and the [wiring video](../code/tools/wiring_anim.py) reads the same list. Change a connection here and everything follows. |
 
-To regenerate after editing a connection:
-
-```sh
-uv run python wiring/wiring.py                           # -> wiring/wiring.html
-cd code && uv run python tools/wiring_anim.py            # -> images/assembly/wiring_top.mp4
-```
+The video is drawn from the same connection list as the PDF ([`code/tools/wiring_list.py`](../code/tools/wiring_list.py)); to re-render it: `cd code && uv run python tools/wiring_anim.py`.
 
 ## How it's wired, in brief
 

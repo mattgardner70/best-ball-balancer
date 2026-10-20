@@ -2,7 +2,7 @@
 
     cd code && uv run python tools/wiring_anim.py        -> ../images/assembly/wiring.mp4
 
-The connection list comes from wiring/wiring.py (the same list as the wiring PDF). Pin positions are
+The connection list is wiring_list.py (the same list the wiring PDF was made from). Pin positions are
 placed on each board from its datasheet layout, so they're close, not exact. Wires are drawn as smooth
 arcs from pin to pin in their real colours; the Wago lever connectors (not in the 3D model) are drawn
 as blocks on the floor. Needs ffmpeg on the PATH.
@@ -22,8 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "code"))
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "wiring"))
-import wiring  # noqa: E402
+import wiring_list as wiring  # noqa: E402
 from CAD import chassis as ch  # noqa: E402
 from CAD import enclosure as en  # noqa: E402
 from animate import Scene, camera  # noqa: E402

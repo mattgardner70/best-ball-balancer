@@ -134,5 +134,5 @@ uv run python -m CAD.build
 | [`code/sim/`](code/sim/) | MuJoCo model, controller and interactive viewer |
 | [`code/tools/`](code/tools/) | A serial console for live tuning, and the scripts that render the assembly animations and the wiring video |
 | [`BOM/`](BOM/BOM.md) | Bill of materials with links |
-| [`wiring/`](wiring/README.md) | Wiring guide, diagram and wire list (PDF), and the script that draws it |
+| [`wiring/`](wiring/README.md) | Wiring guide, and the diagram and wire list (PDF) |
 | [`assembly.md`](assembly.md) | Step-by-step build guide, with an animation for each stage |
