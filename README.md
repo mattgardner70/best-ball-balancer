@@ -50,7 +50,7 @@ Before buying a single part, the whole machine existed in [MuJoCo](https://mujoc
 
 ### 2. Design every part in code
 
-Every printed part is a [CadQuery](https://cadquery.readthedocs.io/) script. Change a dimension, rerun the build, and every STL, preview and simulation mesh updates together. The parts were iterated many times this way: a split plate holder, preloaded motor straps, a vertical wall for the motor drivers, a raised Mega with room for its plugs underneath.
+Every printed part is a [CadQuery](https://cadquery.readthedocs.io/) script. Change a dimension, rerun the build, and every STL, preview and simulation mesh updates together. The parts were iterated many times this way: a two-piece plate (rim and insert) that prints in about an hour instead of eight, spring-preloaded motor straps, bolt-on holders for every board so each can be wired on the bench, and a raised Mega with room for its plugs underneath.
 
 ### 3. Bring it up, one piece at a time
 
@@ -120,7 +120,7 @@ uv run python -m CAD.build
 | Stage | Hours | |
 |---|---|---|
 | 3D printing | **30** | Mostly unattended. The base plate, frame and shell are the long prints. |
-| Wiring | **5** | Lever connectors and Dupont leads; about 10 solder joints in total. Follow the [wiring PDF](wiring/wiring.pdf). |
+| Wiring | **5** | Lever connectors and Dupont leads; about 10 solder joints in total. Follow the [wiring video](images/assembly/wiring_top.mp4) and the [wiring PDF](wiring/wiring.pdf). |
 | Integration hell | **5** | Things always go wrong: a loose wire, a reversed motor, a calibration that needs redoing. Budget for it. |
 | **Total** | **~40** | |
 
