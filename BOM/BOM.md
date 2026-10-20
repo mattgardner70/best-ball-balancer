@@ -1,6 +1,6 @@
 # Bill of materials
 
-About **$229** in parts at the listed prices, plus the three motors and two motor drivers, which aren't priced here. Links are the listings used for this build; equivalent parts work.
+About **$236** in parts at the listed prices, plus the three motors and two motor drivers, which aren't priced here. Links are the listings used for this build; equivalent parts work.
 
 ## Motion
 
@@ -17,7 +17,7 @@ About **$229** in parts at the listed prices, plus the three motors and two moto
 
 | Part | Qty used | Buy | Price | Where |
 |---|---|---|---|---|
-| Heatsinks, 9 × 9 × 5 mm aluminium, with 3M 8810 thermal tape | 8 | 1 pack of 20 | — | [Easycargo B079FQ22LK](https://www.amazon.com/dp/B079FQ22LK) |
+| Heatsinks, 9 × 9 × 5 mm aluminium, with 3M 8810 thermal tape | 8 | 1 pack of 20 | $6.99 | [Easycargo B079FQ22LK](https://www.amazon.com/dp/B079FQ22LK) |
 | Arduino Mega 2560 R3 | 1 | 1 | $22.99 | [ELEGOO B01H4ZDYCE](https://www.amazon.com/dp/B01H4ZDYCE) |
 | Cytron MDD3A dual motor driver, 4–16 V, 3 A/channel | 2 | 2 | — | [Cytron MDD3A](https://www.cytron.io/p-3amp-4v-16v-dc-motor-driver-2-channels) |
 | 8.4" 4-wire resistive touch panel | 1 | 1 | $38.88 | [VSDISPLAY B07TZGVY8K](https://www.amazon.com/dp/B07TZGVY8K) |

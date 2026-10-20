@@ -77,7 +77,7 @@ Gains were tuned live over serial, one keypress at a time, then saved. Leg trims
 
 ## Requirements
 
-**Hardware:** everything is in the [bill of materials](BOM/BOM.md): about $230 of parts plus three GA37-520 gearmotors and two Cytron MDD3A drivers, and about 650 g of PLA/PETG.
+**Hardware:** everything is in the [bill of materials](BOM/BOM.md): about $236 of parts plus three GA37-520 gearmotors and two Cytron MDD3A drivers, and about 650 g of PLA/PETG.
 
 **Tools:** a 3D printer (every part fits a 256 mm bed), a soldering iron (about 10 joints), a heat-set insert tip, a multimeter and hex keys.
 
