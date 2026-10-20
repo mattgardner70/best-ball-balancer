@@ -1,7 +1,6 @@
 # Best Ball Balancer
 
-**A Journey to create the best ball-balancing plate out there. Aesthetically beautiful, perfectly silent, robust enough to run for years, with all the bells ans whistles.**
-Beyond that, I wanted to make it as easy as possible for others to replicate. I spent a lot of time making it editable, so you can use different motors/drivers, and anyone can follow along and build their own.
+**I set out to build the best ball-balancing plate out there:** beautiful, perfectly silent, robust enough to run for years, and full of features. Just as important, I wanted anyone to be able to build one. Every part is editable, so you can swap in different motors or drivers, and every step is documented so you can follow along and build your own.
 
 Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is; an Arduino Mega closes the loop a hundred times a second. It holds the ball dead centre, or steers it around a circle, a figure-8, a square, or a slow random wander.
 
