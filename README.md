@@ -57,6 +57,48 @@ It powers up in **circle**, and starts the moment a ball touches the panel. Each
 
 **Switching modes:** connect over USB and press `n` in the [console](code/tools/console.py) to step to the next mode (see [Talk to it](assembly.md#talk-to-it) for the other live keys). The MODE button on the console is already wired to the Mega (pin D30), ready for a firmware update that steps through the modes without a laptop.
 
+## Tuning the PID
+
+The ball loop is a PID controller: it looks at where the ball is and how fast it's moving, and decides how far to tilt the plate. Three gains set its personality, and all three can be changed live over USB while the ball is rolling.
+
+| Gain | What it does here | Too low | Too high | Saved value |
+|---|---|---|---|---|
+| **P** (proportional) | Tilts harder the further the ball is from its target | Lazy: the ball drifts to the edges | Overshoots and circles the centre | 6.08 |
+| **I** (integral) | Slowly builds up tilt to cancel a steady lean, so the ball settles exactly on target | Ball rests a few mm off centre | Slow, swinging overshoot | 9.23 |
+| **D** (derivative) | Brakes the ball in proportion to its speed | Overshoots, wobbles | Jittery, twitchy plate | 3.02 |
+
+### How to tune it
+
+Connect the [console](code/tools/console.py) and type keys while it balances. Each press changes a gain by 15%, and `v` shows the current values.
+
+| Keys | Change |
+|---|---|
+| `P` / `p` | P up / down |
+| `I` / `i` | I up / down (`0` turns I off) |
+| `D` / `d` | D up / down |
+| `M` / `m` | Motor damping up / down (how firmly each arm settles on its angle) |
+
+1. **Level it first.** With the ball parked at the centre, the plate shouldn't need to lean. If the status line shows a steady tilt, trim the legs (`1` `2` `3` raise a leg, `!` `@` `#` lower it). Tuning gains can't fix a crooked plate.
+2. **Turn I off** (`0`), so you see P and D on their own.
+3. **Raise P** until the ball comes back briskly from the edge, even if it overshoots a little.
+4. **Raise D** until a push settles with one small overshoot and no wobble. Too much D makes the plate twitch.
+5. **Bring I back** (`I`) until the ball settles right on target instead of a few mm off.
+6. **Test it moving:** step to circle or square with `n`.
+   - If it lags behind the path, raise the feed-forward lead with `>`.
+   - If it drifts sideways along the straight edges, turn the tilt command a couple of degrees with `[` or `]`.
+   - If the whole pattern sits off-centre, move the centre with `a` `f` `w` `z`.
+7. **Save it.** Live changes last until power-off. Write the values you like into the top of [`balance.ino`](code/firmware/balance/balance.ino) (`BALL_KP`, `BALL_KI`, `BALL_KD`) and upload.
+
+### What it looks like when it's off
+
+| Symptom | Try |
+|---|---|
+| Ball orbits or oscillates around the centre | D up, or P down |
+| Weak at the edges, ball reaches the rim | P up |
+| Settles a few mm off centre | I up, or re-level the legs |
+| Plate twitches or buzzes at rest | D down, or M down |
+| Jumps right at the panel's edges | Keep patterns inside the panel: readings get unreliable at the very edge |
+
 ## The story
 
 ### 1. Simulate first
