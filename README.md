@@ -1,6 +1,7 @@
 # Best Ball Balancer
 
-**A desk-sized robot that balances a steel ball on a touch screen, silently.**
+**A Journey to create the best ball-balancing plate out there. Aesthetically beautiful, perfectly silent, robust enough to run for years, with all the bells ans whistles.**
+Beyond that, I wanted to make it as easy as possible for others to replicate. I spent a lot of time making it editable, so you can use different motors/drivers, and anyone can follow along and build their own.
 
 Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is; an Arduino Mega closes the loop a hundred times a second. It holds the ball dead centre, or steers it around a circle, a figure-8, a square, or a slow random wander.
 
