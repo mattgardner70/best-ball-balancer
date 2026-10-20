@@ -49,13 +49,17 @@ About **$297** in parts at the listed prices, motors and motor drivers included.
 
 ### Which screw goes where
 
-| Screw | Qty | Where |
-|---|---|---|
-| M3 × 12 | 12 | Motor straps into the saddle inserts |
-| M3 × 12 | 12 | Flange couplings onto the arms |
-| M3 × 8 | 20 | Board holders onto the base plate (Mega 6, drivers 4, switch 2), and the two MDD3As onto their holder (8, self-tapping into the printed posts) |
-| M3 × 6 | 6 | Arduino Mega onto its holder |
-| M3 nut | 3 | Jam nuts on the rod studs |
+| Fastener | Qty | Where | Step |
+|---|---|---|---|
+| M3 × 12 | 12 | Motor straps into the saddle inserts (2 per strap) | Mount the motors |
+| M3 × 12 | 12 | Flange couplings onto the arms (4 per arm) | Build the legs |
+| Coupling set screw | 3 | Coupling onto the motor's D-shaft, on the flat (comes with the coupling) | Build the legs |
+| Shoulder bolt | 3 | Through the rod's bushing into the arm's elbow insert | Build the legs |
+| M3 × 16 grub screw + M3 nut | 3 + 3 | Into each rod's top insert, nut locked against the rod | Build the legs |
+| Tie-rod end ball screw + nut | 3 | Through each plate nub into the ball joint (comes with the tie-rod ends) | Close it up |
+| M3 × 6 | 6 | Arduino Mega onto its holder's standoffs | Mount the electronics |
+| M3 × 8 | 8 | MDD3As onto the driver holder (4 each), self-tapping into the printed posts | Mount the electronics |
+| M3 × 8 | 12 | Holders onto the base plate pads: Mega 6, drivers 4, switch 2 | Mount the electronics |
 
 **Heat-set inserts (36):** motor saddles 12, holder pads on the base plate 12, Mega holder standoffs 6, rod tops 3, arm elbows 3.
 
