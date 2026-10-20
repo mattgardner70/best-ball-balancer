@@ -80,9 +80,9 @@ Every board has its own printed holder, so you can mount and wire each board on 
 
 ## 6. Wire it
 
-[![Every wire, one connection at a time (video)](images/assembly/wiring_top_poster.png)](images/assembly/wiring_top.mp4)
+https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e
 
-Watch the **[wiring video](images/assembly/wiring_top.mp4)** (7½ min, top-down): it draws every one of the 56 connections in order, 8 seconds each, naming both ends. Follow along with the [wiring diagram](wiring/wiring.pdf), which has every connection on one page per subsystem and a wire list by part. More in the [wiring guide](wiring/README.md).
+The **wiring video** (about 4¾ min, top-down) draws every one of the 56 connections in order, 5 seconds each, naming both ends. Follow along with the [wiring diagram](wiring/wiring.pdf), which has every connection on one page per subsystem and a wire list by part. More in the [wiring guide](wiring/README.md).
 
 - **Power and ground** run through lever connectors, one bus each for +12 V, +5 V and ground.
 - **Signals** are Dupont leads straight onto the Mega's pins.

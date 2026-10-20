@@ -5,9 +5,9 @@ Everything you need to wire the balancer: 56 connections between the power jack,
 
 https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e
 
- (7½ min, top-down). Every connection is drawn in order, 8 seconds each, with both ends named and the wire type below. Earlier wires stay faint so the current one stands out. Pause it, make that connection, play on.
+**The wiring video** (about 4¾ min, top-down). Every connection is drawn in order, 5 seconds each, with both ends named and the wire type below. Earlier wires stay faint so the current one stands out. Pause it, make that connection, play on.
 
-The Wago buses are colour-coded in the video: **dark red** = +12 V, **orange** = +5 V, **black** = ground.
+The Wago buses are colour-coded in the video: **dark red** = +12 V, **orange** = +5 V, **black** = ground. The wires follow the same colours: 12 V dark red, 5 V orange, ground dark grey, encoders blue and purple, signals yellow and white.
 
 ## The files
 

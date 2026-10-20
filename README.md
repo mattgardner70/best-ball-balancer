@@ -8,7 +8,7 @@ Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is;
 
 | | |
 |---|---|
-| **Build** | [Assembly guide](assembly.md) (animated, step by step) · [Bill of materials](BOM/BOM.md) · [Wiring guide](wiring/README.md) with a [wire-by-wire video](images/assembly/wiring_top.mp4) |
+| **Build** | [Assembly guide](assembly.md) (animated, step by step) · [Bill of materials](BOM/BOM.md) · [Wiring guide](wiring/README.md) with a [wire-by-wire video](https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e) |
 | **Files** | [3D-printable parts](stl/) · [CAD source](CAD/) · [Firmware](code/firmware/balance/balance.ino) · [Simulation](code/sim/) |
 | **Power** | 12–20 W from a 12 V wall adapter |
 | **Time** | About 40 hours, most of it printing ([breakdown](#time-estimate)) |
@@ -120,7 +120,7 @@ uv run python -m CAD.build
 | Stage | Hours | |
 |---|---|---|
 | 3D printing | **30** | Mostly unattended. The base plate, frame and shell are the long prints. |
-| Wiring | **5** | Lever connectors and Dupont leads; about 10 solder joints in total. Follow the [wiring video](images/assembly/wiring_top.mp4) and the [wiring PDF](wiring/wiring.pdf). |
+| Wiring | **5** | Lever connectors and Dupont leads; about 10 solder joints in total. Follow the [wiring video](https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e) and the [wiring PDF](wiring/wiring.pdf). |
 | Integration hell | **5** | Things always go wrong: a loose wire, a reversed motor, a calibration that needs redoing. Budget for it. |
 | **Total** | **~40** | |
 
