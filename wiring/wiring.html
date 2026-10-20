@@ -1,0 +1,432 @@
+<meta charset="utf-8">
+<title>Ball Balancer Wiring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root {
+  /* Layout: a drafting sheet. Three schematic panels, then one wire table per part. */
+  --bg: #f7f7f4; --paper: #ffffff; --ink: #1f2326; --muted: #5d666d; --rule: #cfd5d8; --card: #f0f3f4;
+  --w12: #d6332c; --w5: #e8890c; --wgnd: #24282b; --wlink: #8a939a; --wmotp: #e0a800; --wmotn: #9aa3a9;
+  --wencA: #3bc9db; --wencB: #be4bdb; --wpwm: #1971c2; --wdir: #7048e8; --wstby: #868e96; --wtouch: #0c8f73;
+  --wbtn: #c2255c; --wctl: #e8590c;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141719; --paper: #1b1f22; --ink: #e6e9eb; --muted: #9aa4ab; --rule: #3a4248; --card: #22282c;
+  --wgnd: #d5dadd; --wmotn: #c3cacf; --wlink: #9aa3a9; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141719; --paper: #1b1f22; --ink: #e6e9eb; --muted: #9aa4ab; --rule: #3a4248; --card: #22282c;
+  --wgnd: #d5dadd; --wmotn: #c3cacf; --wlink: #9aa3a9; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); }
+main { max-width: 1280px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 28px; }
+h1 { margin: 0; font-size: 1.6rem; text-wrap: balance; }
+h2 { margin: 0 0 6px; font-size: 1.1rem; }
+h3 { margin: 0 0 8px; font-size: .95rem; }
+p { margin: 0; line-height: 1.55; max-width: 75ch; color: var(--muted); }
+.panel { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 14px; min-width: 0; }
+.scroll { overflow-x: auto; }
+svg { width: 100%; min-width: 900px; height: auto; display: block; }
+.wire { fill: none; stroke-width: 2.6; stroke-linejoin: round; }
+.wire:hover { stroke-width: 5; }
+.card rect { fill: var(--card); stroke: var(--rule); stroke-width: 1.2; }
+.dname { font: 600 13px var(--sans); fill: var(--ink); }
+.pin { font: 12px var(--mono); fill: var(--ink); text-anchor: middle; }
+.pinL { font: 12px var(--mono); fill: var(--ink); text-anchor: start; }
+.pinR { font: 12px var(--mono); fill: var(--ink); text-anchor: end; }
+.tag rect { fill: var(--card); stroke: var(--rule); }
+.tag text { font: 12px var(--sans); fill: var(--ink); }
+.tag .tpin { font: 600 12px var(--mono); }
+.flow text { font: 600 13px var(--sans); fill: var(--ink); text-anchor: middle; }
+.flow .sub { font: 11px var(--mono); fill: var(--muted); }
+.arrow { fill: none; stroke-width: 3; }
+.dot { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+.wago rect { fill: #e9ecef; stroke: #868e96; stroke-width: 1.2; }
+.wago .lever { fill: #f08c00; stroke: #c96f00; }
+.port { font: 600 11px var(--mono); fill: #2b2b2b; text-anchor: middle; }
+.wlabel { font: 600 12px var(--sans); fill: var(--ink); text-anchor: middle; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .85rem; color: var(--muted); }
+.sw { display: inline-block; width: 22px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.tables { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+.tbl { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 12px; min-width: 0; }
+table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+th, td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 500 .72rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.mono { font-family: var(--mono); }
+.notes { display: grid; gap: 8px; }
+.notes li { line-height: 1.5; }
+</style>
+<main>
+<header style="display:grid;gap:8px">
+  <h1>Ball balancer wiring</h1>
+  <p>Every connection, generated from the same list as the tables below (<span class="mono">wiring/wiring.py</span>).
+  Power and ground run through eight WAGO 221-415 lever connectors: two for +12 V, two for +5 V, four for ground,
+  each pair or group linked by a short jumper. Signals are Dupont leads. Hover a wire to see its two ends.</p>
+  <div class="legend"><span><span class="sw" style="background:var(--w12)"></span>+12 V</span><span><span class="sw" style="background:var(--w5)"></span>+5 V</span><span><span class="sw" style="background:var(--wgnd)"></span>GND</span><span><span class="sw" style="background:var(--wlink)"></span>Wago link</span><span><span class="sw" style="background:var(--wmotp)"></span>motor +</span><span><span class="sw" style="background:var(--wmotn)"></span>motor −</span><span><span class="sw" style="background:var(--wencA)"></span>encoder A</span><span><span class="sw" style="background:var(--wencB)"></span>encoder B</span><span><span class="sw" style="background:var(--wpwm)"></span>PWM</span><span><span class="sw" style="background:var(--wtouch)"></span>touch panel</span><span><span class="sw" style="background:var(--wbtn)"></span>buttons</span><span><span class="sw" style="background:var(--wctl)"></span>power-off control</span></div>
+</header>
+<section class="panel"><h2>Power: what plugs into every Wago port</h2><div class="scroll"><svg viewBox="0 0 1240 650" role="img" aria-label="Power distribution through the Wago buses">
+<g class="flow card"><rect x="20" y="20" width="160" height="56" rx="6"/><text x="100" y="44">12 V 5 A adapter</text><text class="sub" x="100" y="62">barrel plug</text></g>
+<g class="flow card"><rect x="230" y="20" width="160" height="56" rx="6"/><text x="310" y="44">Panel jack</text><text class="sub" x="310" y="62">frame back tab</text></g>
+<g class="flow card"><rect x="440" y="20" width="160" height="56" rx="6"/><text x="520" y="44">Pololu #2813</text><text class="sub" x="520" y="62">VIN → VOUT</text></g>
+<g class="flow card"><rect x="650" y="20" width="160" height="56" rx="6"/><text x="730" y="44">+12 V Wagos</text><text class="sub" x="730" y="62">A + B</text></g>
+<g class="flow card"><rect x="860" y="20" width="160" height="56" rx="6"/><text x="940" y="44">DROK buck</text><text class="sub" x="940" y="62">12 V → 5 V</text></g>
+<g class="flow card"><rect x="1070" y="20" width="160" height="56" rx="6"/><text x="1150" y="44">+5 V Wagos</text><text class="sub" x="1150" y="62">A + B</text></g>
+<path class="arrow" style="stroke:var(--w12)" d="M180,48 H224"/><path style="fill:var(--w12)" d="M222,42 L230,48 L222,54 Z"/>
+<path class="arrow" style="stroke:var(--w12)" d="M390,48 H434"/><path style="fill:var(--w12)" d="M432,42 L440,48 L432,54 Z"/>
+<path class="arrow" style="stroke:var(--w12)" d="M600,48 H644"/><path style="fill:var(--w12)" d="M642,42 L650,48 L642,54 Z"/>
+<path class="arrow" style="stroke:var(--w12)" d="M810,48 H854"/><path style="fill:var(--w12)" d="M852,42 L860,48 L852,54 Z"/>
+<path class="arrow" style="stroke:var(--w5)" d="M1020,48 H1064"/><path style="fill:var(--w5)" d="M1062,42 L1070,48 L1062,54 Z"/>
+<text class="flow sub" x="620" y="100" style="text-anchor:middle">Every ground goes to the GND Wagos below. Linked Wagos act as one bus: the dashed port joins them.</text>
+<text class="dname" x="20" y="132" style="font-size:15px">+12 V bus</text>
+<g class="wago"><rect x="20" y="150" width="44" height="164" rx="4"/>
+<rect class="lever" x="26" y="158" width="32" height="25" rx="3"/><text class="port" x="42" y="175">1</text>
+<rect class="lever" x="26" y="189" width="32" height="25" rx="3"/><text class="port" x="42" y="206">2</text>
+<rect class="lever" x="26" y="220" width="32" height="25" rx="3"/><text class="port" x="42" y="237">3</text>
+<rect class="lever" x="26" y="251" width="32" height="25" rx="3"/><text class="port" x="42" y="268">4</text>
+<rect class="lever" x="26" y="282" width="32" height="25" rx="3"/><text class="port" x="42" y="299">5</text>
+<text class="wlabel" x="42" y="336">+12 V (A)</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M64,170 H82"/><g class="tag"><rect x="82" y="158" width="225" height="24" rx="4"/><text x="90" y="174">Pololu #2813 soft power switch</text><text class="tpin" x="299" y="174" style="text-anchor:end">VOUT</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M64,201 H82"/><g class="tag"><rect x="82" y="189" width="225" height="24" rx="4"/><text x="90" y="205">Cytron MDD3A #1 (motors 1, 2)</text><text class="tpin" x="299" y="205" style="text-anchor:end">VB+</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M64,232 H82"/><g class="tag"><rect x="82" y="220" width="225" height="24" rx="4"/><text x="90" y="236">Cytron MDD3A #2 (motor 3)</text><text class="tpin" x="299" y="236" style="text-anchor:end">VB+</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M64,263 H82"/><g class="tag"><rect x="82" y="251" width="225" height="24" rx="4"/><text x="90" y="267">Arduino Mega 2560</text><text class="tpin" x="299" y="267" style="text-anchor:end">VIN</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M64,294 H82"/><g class="tag"><rect x="82" y="282" width="225" height="24" rx="4"/><text x="90" y="298">link to +12 V (B) port 1</text></g>
+<g class="wago"><rect x="325" y="150" width="44" height="164" rx="4"/>
+<rect class="lever" x="331" y="158" width="32" height="25" rx="3"/><text class="port" x="347" y="175">1</text>
+<rect class="lever" x="331" y="189" width="32" height="25" rx="3"/><text class="port" x="347" y="206">2</text>
+<rect class="lever" x="331" y="220" width="32" height="25" rx="3"/><text class="port" x="347" y="237">3</text>
+<rect class="lever" x="331" y="251" width="32" height="25" rx="3"/><text class="port" x="347" y="268">4</text>
+<rect class="lever" x="331" y="282" width="32" height="25" rx="3"/><text class="port" x="347" y="299">5</text>
+<text class="wlabel" x="347" y="336">+12 V (B)</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M369,170 H387"/><g class="tag"><rect x="387" y="158" width="225" height="24" rx="4"/><text x="395" y="174">link to +12 V (A) port 5</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M369,201 H387"/><g class="tag"><rect x="387" y="189" width="225" height="24" rx="4"/><text x="395" y="205">DROK 12→5 V buck</text><text class="tpin" x="604" y="205" style="text-anchor:end">IN+</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M369,232 H387"/><g class="tag"><rect x="387" y="220" width="225" height="24" rx="4"/><text x="395" y="236">POWER button</text><text class="tpin" x="604" y="236" style="text-anchor:end">LED+</text></g>
+<path class="wire" style="stroke:var(--w12)" d="M369,263 H387"/><g class="tag"><rect x="387" y="251" width="225" height="24" rx="4"/><text x="395" y="267">MODE button</text><text class="tpin" x="604" y="267" style="text-anchor:end">LED+</text></g>
+<text class="pinL" x="385" y="298" style="fill:var(--muted)">spare</text>
+<text class="dname" x="630" y="132" style="font-size:15px">+5 V bus</text>
+<g class="wago"><rect x="630" y="150" width="44" height="164" rx="4"/>
+<rect class="lever" x="636" y="158" width="32" height="25" rx="3"/><text class="port" x="652" y="175">1</text>
+<rect class="lever" x="636" y="189" width="32" height="25" rx="3"/><text class="port" x="652" y="206">2</text>
+<rect class="lever" x="636" y="220" width="32" height="25" rx="3"/><text class="port" x="652" y="237">3</text>
+<rect class="lever" x="636" y="251" width="32" height="25" rx="3"/><text class="port" x="652" y="268">4</text>
+<rect class="lever" x="636" y="282" width="32" height="25" rx="3"/><text class="port" x="652" y="299">5</text>
+<text class="wlabel" x="652" y="336">+5 V</text></g>
+<path class="wire" style="stroke:var(--w5)" d="M674,170 H692"/><g class="tag"><rect x="692" y="158" width="225" height="24" rx="4"/><text x="700" y="174">DROK 12→5 V buck</text><text class="tpin" x="909" y="174" style="text-anchor:end">OUT+</text></g>
+<path class="wire" style="stroke:var(--w5)" d="M674,201 H692"/><g class="tag"><rect x="692" y="189" width="225" height="24" rx="4"/><text x="700" y="205">Motor 1 (leg 0°)</text><text class="tpin" x="909" y="205" style="text-anchor:end">5 5V</text></g>
+<path class="wire" style="stroke:var(--w5)" d="M674,232 H692"/><g class="tag"><rect x="692" y="220" width="225" height="24" rx="4"/><text x="700" y="236">Motor 2 (leg 120°)</text><text class="tpin" x="909" y="236" style="text-anchor:end">5 5V</text></g>
+<path class="wire" style="stroke:var(--w5)" d="M674,263 H692"/><g class="tag"><rect x="692" y="251" width="225" height="24" rx="4"/><text x="700" y="267">Motor 3 (leg 240°)</text><text class="tpin" x="909" y="267" style="text-anchor:end">5 5V</text></g>
+<text class="pinL" x="690" y="298" style="fill:var(--muted)">spare</text>
+<text class="dname" x="20" y="412" style="font-size:15px">Ground bus</text>
+<g class="wago"><rect x="20" y="430" width="44" height="164" rx="4"/>
+<rect class="lever" x="26" y="438" width="32" height="25" rx="3"/><text class="port" x="42" y="455">1</text>
+<rect class="lever" x="26" y="469" width="32" height="25" rx="3"/><text class="port" x="42" y="486">2</text>
+<rect class="lever" x="26" y="500" width="32" height="25" rx="3"/><text class="port" x="42" y="517">3</text>
+<rect class="lever" x="26" y="531" width="32" height="25" rx="3"/><text class="port" x="42" y="548">4</text>
+<rect class="lever" x="26" y="562" width="32" height="25" rx="3"/><text class="port" x="42" y="579">5</text>
+<text class="wlabel" x="42" y="616">GND (1)</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M64,450 H82"/><g class="tag"><rect x="82" y="438" width="225" height="24" rx="4"/><text x="90" y="454">Panel jack (frame back tab)</text><text class="tpin" x="299" y="454" style="text-anchor:end">−</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M64,481 H82"/><g class="tag"><rect x="82" y="469" width="225" height="24" rx="4"/><text x="90" y="485">Pololu #2813 soft power switch</text><text class="tpin" x="299" y="485" style="text-anchor:end">GND</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M64,512 H82"/><g class="tag"><rect x="82" y="500" width="225" height="24" rx="4"/><text x="90" y="516">Cytron MDD3A #1 (motors 1, 2)</text><text class="tpin" x="299" y="516" style="text-anchor:end">VB−</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M64,543 H82"/><g class="tag"><rect x="82" y="531" width="225" height="24" rx="4"/><text x="90" y="547">Cytron MDD3A #2 (motor 3)</text><text class="tpin" x="299" y="547" style="text-anchor:end">VB−</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M64,574 H82"/><g class="tag"><rect x="82" y="562" width="225" height="24" rx="4"/><text x="90" y="578">link to GND (2) port 1</text></g>
+<g class="wago"><rect x="325" y="430" width="44" height="164" rx="4"/>
+<rect class="lever" x="331" y="438" width="32" height="25" rx="3"/><text class="port" x="347" y="455">1</text>
+<rect class="lever" x="331" y="469" width="32" height="25" rx="3"/><text class="port" x="347" y="486">2</text>
+<rect class="lever" x="331" y="500" width="32" height="25" rx="3"/><text class="port" x="347" y="517">3</text>
+<rect class="lever" x="331" y="531" width="32" height="25" rx="3"/><text class="port" x="347" y="548">4</text>
+<rect class="lever" x="331" y="562" width="32" height="25" rx="3"/><text class="port" x="347" y="579">5</text>
+<text class="wlabel" x="347" y="616">GND (2)</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M369,450 H387"/><g class="tag"><rect x="387" y="438" width="225" height="24" rx="4"/><text x="395" y="454">link to GND (1) port 5</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M369,481 H387"/><g class="tag"><rect x="387" y="469" width="225" height="24" rx="4"/><text x="395" y="485">Arduino Mega 2560</text><text class="tpin" x="604" y="485" style="text-anchor:end">GND</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M369,512 H387"/><g class="tag"><rect x="387" y="500" width="225" height="24" rx="4"/><text x="395" y="516">DROK 12→5 V buck</text><text class="tpin" x="604" y="516" style="text-anchor:end">IN−</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M369,543 H387"/><g class="tag"><rect x="387" y="531" width="225" height="24" rx="4"/><text x="395" y="547">DROK 12→5 V buck</text><text class="tpin" x="604" y="547" style="text-anchor:end">OUT−</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M369,574 H387"/><g class="tag"><rect x="387" y="562" width="225" height="24" rx="4"/><text x="395" y="578">link to GND (3) port 1</text></g>
+<g class="wago"><rect x="630" y="430" width="44" height="164" rx="4"/>
+<rect class="lever" x="636" y="438" width="32" height="25" rx="3"/><text class="port" x="652" y="455">1</text>
+<rect class="lever" x="636" y="469" width="32" height="25" rx="3"/><text class="port" x="652" y="486">2</text>
+<rect class="lever" x="636" y="500" width="32" height="25" rx="3"/><text class="port" x="652" y="517">3</text>
+<rect class="lever" x="636" y="531" width="32" height="25" rx="3"/><text class="port" x="652" y="548">4</text>
+<rect class="lever" x="636" y="562" width="32" height="25" rx="3"/><text class="port" x="652" y="579">5</text>
+<text class="wlabel" x="652" y="616">GND (3)</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M674,450 H692"/><g class="tag"><rect x="692" y="438" width="225" height="24" rx="4"/><text x="700" y="454">link to GND (2) port 5</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M674,481 H692"/><g class="tag"><rect x="692" y="469" width="225" height="24" rx="4"/><text x="700" y="485">Motor 1 (leg 0°)</text><text class="tpin" x="909" y="485" style="text-anchor:end">2 GND</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M674,512 H692"/><g class="tag"><rect x="692" y="500" width="225" height="24" rx="4"/><text x="700" y="516">Motor 2 (leg 120°)</text><text class="tpin" x="909" y="516" style="text-anchor:end">2 GND</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M674,543 H692"/><g class="tag"><rect x="692" y="531" width="225" height="24" rx="4"/><text x="700" y="547">Motor 3 (leg 240°)</text><text class="tpin" x="909" y="547" style="text-anchor:end">2 GND</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M674,574 H692"/><g class="tag"><rect x="692" y="562" width="225" height="24" rx="4"/><text x="700" y="578">link to GND (4) port 1</text></g>
+<g class="wago"><rect x="935" y="430" width="44" height="164" rx="4"/>
+<rect class="lever" x="941" y="438" width="32" height="25" rx="3"/><text class="port" x="957" y="455">1</text>
+<rect class="lever" x="941" y="469" width="32" height="25" rx="3"/><text class="port" x="957" y="486">2</text>
+<rect class="lever" x="941" y="500" width="32" height="25" rx="3"/><text class="port" x="957" y="517">3</text>
+<rect class="lever" x="941" y="531" width="32" height="25" rx="3"/><text class="port" x="957" y="548">4</text>
+<rect class="lever" x="941" y="562" width="32" height="25" rx="3"/><text class="port" x="957" y="579">5</text>
+<text class="wlabel" x="957" y="616">GND (4)</text></g>
+<path class="wire" style="stroke:var(--wlink)" stroke-dasharray="6 4" d="M979,450 H997"/><g class="tag"><rect x="997" y="438" width="225" height="24" rx="4"/><text x="1005" y="454">link to GND (3) port 5</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M979,481 H997"/><g class="tag"><rect x="997" y="469" width="225" height="24" rx="4"/><text x="1005" y="485">POWER button</text><text class="tpin" x="1214" y="485" style="text-anchor:end">LED−</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M979,512 H997"/><g class="tag"><rect x="997" y="500" width="225" height="24" rx="4"/><text x="1005" y="516">POWER button</text><text class="tpin" x="1214" y="516" style="text-anchor:end">C</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M979,543 H997"/><g class="tag"><rect x="997" y="531" width="225" height="24" rx="4"/><text x="1005" y="547">MODE button</text><text class="tpin" x="1214" y="547" style="text-anchor:end">LED−</text></g>
+<path class="wire" style="stroke:var(--wgnd)" d="M979,574 H997"/><g class="tag"><rect x="997" y="562" width="225" height="24" rx="4"/><text x="1005" y="578">MODE button</text><text class="tpin" x="1214" y="578" style="text-anchor:end">C</text></g>
+</svg></div></section><section class="panel"><h2>Motors: control signals, motor power and encoders</h2><div class="scroll"><svg viewBox="0 0 1240 880" role="img" aria-label="Motors: control signals, motor power and encoders">
+<path d="M180,84 H322.0 V84 H520" class="wire" style="stroke:var(--wpwm)"><title>Arduino Mega 2560 D6 → Cytron MDD3A #1 (motors 1, 2) M1A in</title></path>
+<path d="M180,114 H329.0 V114 H520" class="wire" style="stroke:var(--wpwm)"><title>Arduino Mega 2560 D7 → Cytron MDD3A #1 (motors 1, 2) M1B in</title></path>
+<path d="M180,144 H336.0 V144 H520" class="wire" style="stroke:var(--wpwm)"><title>Arduino Mega 2560 D8 → Cytron MDD3A #1 (motors 1, 2) M2A in</title></path>
+<path d="M180,174 H343.0 V174 H520" class="wire" style="stroke:var(--wpwm)"><title>Arduino Mega 2560 D44 → Cytron MDD3A #1 (motors 1, 2) M2B in</title></path>
+<path d="M180,204 H350.0 V464 H520" class="wire" style="stroke:var(--wpwm)"><title>Arduino Mega 2560 D45 → Cytron MDD3A #2 (motor 3) M1A in</title></path>
+<path d="M180,234 H357.0 V494 H520" class="wire" style="stroke:var(--wpwm)"><title>Arduino Mega 2560 D46 → Cytron MDD3A #2 (motor 3) M1B in</title></path>
+<path d="M690,84 H849.0 V84 H980" class="wire" style="stroke:var(--wmotp)"><title>Cytron MDD3A #1 (motors 1, 2) M1A → Motor 1 (leg 0°) 1 M+</title></path>
+<path d="M690,114 H856.0 V114 H980" class="wire" style="stroke:var(--wmotn)"><title>Cytron MDD3A #1 (motors 1, 2) M1B → Motor 1 (leg 0°) 6 M−</title></path>
+<path d="M690,144 H863.0 V344 H980" class="wire" style="stroke:var(--wmotp)"><title>Cytron MDD3A #1 (motors 1, 2) M2A → Motor 2 (leg 120°) 1 M+</title></path>
+<path d="M690,174 H807.0 V374 H980" class="wire" style="stroke:var(--wmotn)"><title>Cytron MDD3A #1 (motors 1, 2) M2B → Motor 2 (leg 120°) 6 M−</title></path>
+<path d="M690,464 H814.0 V604 H980" class="wire" style="stroke:var(--wmotp)"><title>Cytron MDD3A #2 (motor 3) M1A → Motor 3 (leg 240°) 1 M+</title></path>
+<path d="M690,494 H821.0 V634 H980" class="wire" style="stroke:var(--wmotn)"><title>Cytron MDD3A #2 (motor 3) M1B → Motor 3 (leg 240°) 6 M−</title></path>
+<path d="M980,144 H956 V800 H210 V264 H180" class="wire" style="stroke:var(--wencA)"><title>Motor 1 (leg 0°) 3 A → Arduino Mega 2560 D2</title></path>
+<path d="M980,174 H949 V809 H219 V294 H180" class="wire" style="stroke:var(--wencB)"><title>Motor 1 (leg 0°) 4 B → Arduino Mega 2560 D19</title></path>
+<path d="M980,404 H942 V818 H228 V324 H180" class="wire" style="stroke:var(--wencA)"><title>Motor 2 (leg 120°) 3 A → Arduino Mega 2560 D3</title></path>
+<path d="M980,434 H935 V827 H237 V354 H180" class="wire" style="stroke:var(--wencB)"><title>Motor 2 (leg 120°) 4 B → Arduino Mega 2560 D20</title></path>
+<path d="M980,664 H928 V836 H246 V384 H180" class="wire" style="stroke:var(--wencA)"><title>Motor 3 (leg 240°) 3 A → Arduino Mega 2560 D18</title></path>
+<path d="M980,694 H921 V845 H255 V414 H180" class="wire" style="stroke:var(--wencB)"><title>Motor 3 (leg 240°) 4 B → Arduino Mega 2560 D21</title></path>
+<g class="card"><rect x="30" y="40" width="150" height="408" rx="6"/><text class="dname" x="40" y="62">Arduino Mega 2560</text>
+<circle class="dot" cx="180" cy="84" r="4"/><text class="pinR" x="170" y="88">D6</text>
+<circle class="dot" cx="180" cy="114" r="4"/><text class="pinR" x="170" y="118">D7</text>
+<circle class="dot" cx="180" cy="144" r="4"/><text class="pinR" x="170" y="148">D8</text>
+<circle class="dot" cx="180" cy="174" r="4"/><text class="pinR" x="170" y="178">D44</text>
+<circle class="dot" cx="180" cy="204" r="4"/><text class="pinR" x="170" y="208">D45</text>
+<circle class="dot" cx="180" cy="234" r="4"/><text class="pinR" x="170" y="238">D46</text>
+<circle class="dot" cx="180" cy="264" r="4"/><text class="pinR" x="170" y="268">D2</text>
+<circle class="dot" cx="180" cy="294" r="4"/><text class="pinR" x="170" y="298">D19</text>
+<circle class="dot" cx="180" cy="324" r="4"/><text class="pinR" x="170" y="328">D3</text>
+<circle class="dot" cx="180" cy="354" r="4"/><text class="pinR" x="170" y="358">D20</text>
+<circle class="dot" cx="180" cy="384" r="4"/><text class="pinR" x="170" y="388">D18</text>
+<circle class="dot" cx="180" cy="414" r="4"/><text class="pinR" x="170" y="418">D21</text>
+</g>
+<g class="card"><rect x="520" y="40" width="170" height="168" rx="6"/><text class="dname" x="530" y="62">Cytron MDD3A #1 (motors 1, 2)</text>
+<circle class="dot" cx="520" cy="84" r="4"/><text class="pinL" x="530" y="88">M1A in</text>
+<circle class="dot" cx="520" cy="114" r="4"/><text class="pinL" x="530" y="118">M1B in</text>
+<circle class="dot" cx="520" cy="144" r="4"/><text class="pinL" x="530" y="148">M2A in</text>
+<circle class="dot" cx="520" cy="174" r="4"/><text class="pinL" x="530" y="178">M2B in</text>
+<circle class="dot" cx="690" cy="84" r="4"/><text class="pinR" x="680" y="88">M1A</text>
+<circle class="dot" cx="690" cy="114" r="4"/><text class="pinR" x="680" y="118">M1B</text>
+<circle class="dot" cx="690" cy="144" r="4"/><text class="pinR" x="680" y="148">M2A</text>
+<circle class="dot" cx="690" cy="174" r="4"/><text class="pinR" x="680" y="178">M2B</text>
+</g>
+<g class="card"><rect x="520" y="420" width="170" height="108" rx="6"/><text class="dname" x="530" y="442">Cytron MDD3A #2 (motor 3)</text>
+<circle class="dot" cx="520" cy="464" r="4"/><text class="pinL" x="530" y="468">M1A in</text>
+<circle class="dot" cx="520" cy="494" r="4"/><text class="pinL" x="530" y="498">M1B in</text>
+<circle class="dot" cx="690" cy="464" r="4"/><text class="pinR" x="680" y="468">M1A</text>
+<circle class="dot" cx="690" cy="494" r="4"/><text class="pinR" x="680" y="498">M1B</text>
+</g>
+<g class="card"><rect x="980" y="40" width="170" height="168" rx="6"/><text class="dname" x="990" y="62">Motor 1 (leg 0°)</text>
+<circle class="dot" cx="980" cy="84" r="4"/><text class="pinL" x="990" y="88">1 M+</text>
+<circle class="dot" cx="980" cy="114" r="4"/><text class="pinL" x="990" y="118">6 M−</text>
+<circle class="dot" cx="980" cy="144" r="4"/><text class="pinL" x="990" y="148">3 A</text>
+<circle class="dot" cx="980" cy="174" r="4"/><text class="pinL" x="990" y="178">4 B</text>
+</g>
+<g class="card"><rect x="980" y="300" width="170" height="168" rx="6"/><text class="dname" x="990" y="322">Motor 2 (leg 120°)</text>
+<circle class="dot" cx="980" cy="344" r="4"/><text class="pinL" x="990" y="348">1 M+</text>
+<circle class="dot" cx="980" cy="374" r="4"/><text class="pinL" x="990" y="378">6 M−</text>
+<circle class="dot" cx="980" cy="404" r="4"/><text class="pinL" x="990" y="408">3 A</text>
+<circle class="dot" cx="980" cy="434" r="4"/><text class="pinL" x="990" y="438">4 B</text>
+</g>
+<g class="card"><rect x="980" y="560" width="170" height="168" rx="6"/><text class="dname" x="990" y="582">Motor 3 (leg 240°)</text>
+<circle class="dot" cx="980" cy="604" r="4"/><text class="pinL" x="990" y="608">1 M+</text>
+<circle class="dot" cx="980" cy="634" r="4"/><text class="pinL" x="990" y="638">6 M−</text>
+<circle class="dot" cx="980" cy="664" r="4"/><text class="pinL" x="990" y="668">3 A</text>
+<circle class="dot" cx="980" cy="694" r="4"/><text class="pinL" x="990" y="698">4 B</text>
+</g>
+</svg></div></section><section class="panel"><h2>Touch panel, buttons and soft power</h2><div class="scroll"><svg viewBox="0 0 1240 560" role="img" aria-label="Touch panel, buttons and soft power">
+<path d="M200,84 H352.0 V84 H560" class="wire" style="stroke:var(--wtouch)"><title>Touch-panel tail connector 1 Y− → Arduino Mega 2560 A3</title></path>
+<path d="M200,114 H359.0 V114 H560" class="wire" style="stroke:var(--wtouch)"><title>Touch-panel tail connector 2 X− → Arduino Mega 2560 A2</title></path>
+<path d="M200,144 H366.0 V144 H560" class="wire" style="stroke:var(--wtouch)"><title>Touch-panel tail connector 3 Y+ → Arduino Mega 2560 A1</title></path>
+<path d="M200,174 H373.0 V174 H560" class="wire" style="stroke:var(--wtouch)"><title>Touch-panel tail connector 4 X+ → Arduino Mega 2560 A0</title></path>
+<path d="M200,344 H590.0 V344 H980" class="wire" style="stroke:var(--wbtn)"><title>POWER button NO → Pololu #2813 soft power switch A</title></path>
+<path d="M200,374 H387.0 V204 H560" class="wire" style="stroke:var(--wbtn)"><title>POWER button NC → Arduino Mega 2560 D31</title></path>
+<path d="M200,484 H394.0 V234 H560" class="wire" style="stroke:var(--wbtn)"><title>MODE button NO → Arduino Mega 2560 D30</title></path>
+<path d="M560,264 H791.0 V374 H980" class="wire" style="stroke:var(--wctl)"><title>Arduino Mega 2560 D32 → Pololu #2813 soft power switch OFF</title></path>
+<g class="card"><rect x="30" y="40" width="170" height="168" rx="6"/><text class="dname" x="40" y="62">Touch-panel tail connector</text>
+<circle class="dot" cx="200" cy="84" r="4"/><text class="pinR" x="190" y="88">1 Y−</text>
+<circle class="dot" cx="200" cy="114" r="4"/><text class="pinR" x="190" y="118">2 X−</text>
+<circle class="dot" cx="200" cy="144" r="4"/><text class="pinR" x="190" y="148">3 Y+</text>
+<circle class="dot" cx="200" cy="174" r="4"/><text class="pinR" x="190" y="178">4 X+</text>
+</g>
+<g class="card"><rect x="30" y="300" width="170" height="108" rx="6"/><text class="dname" x="40" y="322">POWER button</text>
+<circle class="dot" cx="200" cy="344" r="4"/><text class="pinR" x="190" y="348">NO</text>
+<circle class="dot" cx="200" cy="374" r="4"/><text class="pinR" x="190" y="378">NC</text>
+</g>
+<g class="card"><rect x="30" y="440" width="170" height="78" rx="6"/><text class="dname" x="40" y="462">MODE button</text>
+<circle class="dot" cx="200" cy="484" r="4"/><text class="pinR" x="190" y="488">NO</text>
+</g>
+<g class="card"><rect x="560" y="40" width="150" height="258" rx="6"/><text class="dname" x="570" y="62">Arduino Mega 2560</text>
+<circle class="dot" cx="560" cy="84" r="4"/><text class="pinL" x="570" y="88">A3</text>
+<circle class="dot" cx="560" cy="114" r="4"/><text class="pinL" x="570" y="118">A2</text>
+<circle class="dot" cx="560" cy="144" r="4"/><text class="pinL" x="570" y="148">A1</text>
+<circle class="dot" cx="560" cy="174" r="4"/><text class="pinL" x="570" y="178">A0</text>
+<circle class="dot" cx="560" cy="204" r="4"/><text class="pinL" x="570" y="208">D31</text>
+<circle class="dot" cx="560" cy="234" r="4"/><text class="pinL" x="570" y="238">D30</text>
+<circle class="dot" cx="560" cy="264" r="4"/><text class="pinL" x="570" y="268">D32</text>
+</g>
+<g class="card"><rect x="980" y="300" width="200" height="108" rx="6"/><text class="dname" x="990" y="322">Pololu #2813 soft power switch</text>
+<circle class="dot" cx="980" cy="344" r="4"/><text class="pinL" x="990" y="348">A</text>
+<circle class="dot" cx="980" cy="374" r="4"/><text class="pinL" x="990" y="378">OFF</text>
+</g>
+</svg></div></section>
+<section class="panel notes"><h2>Before you power it on</h2><ul>
+<li>Fit the motors' leads last. First power-up: no motors connected, check 12 V on the +12 V Wagos and 5.0 V on the +5 V Wagos with a meter.</li>
+<li>Never connect the buck's 5 V output and the Mega's USB 5 V together; the Mega takes 12 V on VIN only and makes its own 5 V.</li>
+<li>Touch-panel tail order (Y−, X−, Y+, X+) is from a similar panel's datasheet: confirm with a meter (about 200–900 Ω across each X pair and each Y pair).</li>
+<li>Motor connector pins, left to right: 1 M+, 2 GND, 3 A, 4 B, 5 5V, 6 M−. Port labels give the pin number.</li>
+<li>Our motor cable colours: M+ yellow, GND black, A blue, B purple, 5V red, M− white.</li>
+<li>Our button harness colours: NO blue, C green, NC yellow, LED+ red, LED− black.</li>
+<li>Button harness colours vary by batch: identify LED+, LED−, C, NO and NC with a meter before connecting.</li>
+<li>Program the Mega over USB with the shell lifted; the soft switch can stay off while USB powers the Mega's logic.</li>
+<li>Second MDD3A's channel 2 is unused. Leave both MDD3As' 5V pins unconnected: they are outputs from the board's own regulator.</li>
+</ul></section>
+<h2>Wire list by part</h2>
+<div class="tables"><section class="tbl"><h3>Pololu #2813 soft power switch</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">A</td><td>POWER button · <span class="mono">NO</span></td><td><span class="sw" style="background:var(--wbtn)"></span>button harness to Dupont</td></tr>
+<tr><td class="mono">GND</td><td>Wago GND (1) · <span class="mono">2</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">OFF</td><td>Arduino Mega 2560 · <span class="mono">D32</span></td><td><span class="sw" style="background:var(--wctl)"></span>Dupont</td></tr>
+<tr><td class="mono">VIN</td><td>Panel jack (frame back tab) · <span class="mono">+</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">VOUT</td><td>Wago +12 V (A) · <span class="mono">1</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Panel jack (frame back tab)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">+</td><td>Pololu #2813 soft power switch · <span class="mono">VIN</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">−</td><td>Wago GND (1) · <span class="mono">1</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">socket</td><td>12 V 5 A wall adapter · <span class="mono">plug</span></td><td><span class="sw" style="background:var(--wgnd)"></span>barrel plug</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>DROK 12→5 V buck</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">IN+</td><td>Wago +12 V (B) · <span class="mono">2</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">IN−</td><td>Wago GND (2) · <span class="mono">3</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">OUT+</td><td>Wago +5 V · <span class="mono">1</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">OUT−</td><td>Wago GND (2) · <span class="mono">4</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Arduino Mega 2560</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">A0</td><td>Touch-panel tail connector · <span class="mono">4 X+</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">A1</td><td>Touch-panel tail connector · <span class="mono">3 Y+</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">A2</td><td>Touch-panel tail connector · <span class="mono">2 X−</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">A3</td><td>Touch-panel tail connector · <span class="mono">1 Y−</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">D18</td><td>Motor 3 (leg 240°) · <span class="mono">3 A</span></td><td><span class="sw" style="background:var(--wencA)"></span>motor pin 3, A (blue) to Dupont</td></tr>
+<tr><td class="mono">D19</td><td>Motor 1 (leg 0°) · <span class="mono">4 B</span></td><td><span class="sw" style="background:var(--wencB)"></span>motor pin 4, B (purple) to Dupont</td></tr>
+<tr><td class="mono">D2</td><td>Motor 1 (leg 0°) · <span class="mono">3 A</span></td><td><span class="sw" style="background:var(--wencA)"></span>motor pin 3, A (blue) to Dupont</td></tr>
+<tr><td class="mono">D20</td><td>Motor 2 (leg 120°) · <span class="mono">4 B</span></td><td><span class="sw" style="background:var(--wencB)"></span>motor pin 4, B (purple) to Dupont</td></tr>
+<tr><td class="mono">D21</td><td>Motor 3 (leg 240°) · <span class="mono">4 B</span></td><td><span class="sw" style="background:var(--wencB)"></span>motor pin 4, B (purple) to Dupont</td></tr>
+<tr><td class="mono">D3</td><td>Motor 2 (leg 120°) · <span class="mono">3 A</span></td><td><span class="sw" style="background:var(--wencA)"></span>motor pin 3, A (blue) to Dupont</td></tr>
+<tr><td class="mono">D30</td><td>MODE button · <span class="mono">NO</span></td><td><span class="sw" style="background:var(--wbtn)"></span>button harness to Dupont</td></tr>
+<tr><td class="mono">D31</td><td>POWER button · <span class="mono">NC</span></td><td><span class="sw" style="background:var(--wbtn)"></span>button harness to Dupont</td></tr>
+<tr><td class="mono">D32</td><td>Pololu #2813 soft power switch · <span class="mono">OFF</span></td><td><span class="sw" style="background:var(--wctl)"></span>Dupont</td></tr>
+<tr><td class="mono">D44</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M2B in</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">D45</td><td>Cytron MDD3A #2 (motor 3) · <span class="mono">M1A in</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">D46</td><td>Cytron MDD3A #2 (motor 3) · <span class="mono">M1B in</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">D6</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M1A in</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">D7</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M1B in</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">D8</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M2A in</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">GND</td><td>Wago GND (2) · <span class="mono">2</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">VIN</td><td>Wago +12 V (A) · <span class="mono">4</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Cytron MDD3A #1 (motors 1, 2)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">M1A</td><td>Motor 1 (leg 0°) · <span class="mono">1 M+</span></td><td><span class="sw" style="background:var(--wmotp)"></span>motor pin 1, M+ (yellow)</td></tr>
+<tr><td class="mono">M1B</td><td>Motor 1 (leg 0°) · <span class="mono">6 M−</span></td><td><span class="sw" style="background:var(--wmotn)"></span>motor pin 6, M− (white)</td></tr>
+<tr><td class="mono">M2A</td><td>Motor 2 (leg 120°) · <span class="mono">1 M+</span></td><td><span class="sw" style="background:var(--wmotp)"></span>motor pin 1, M+ (yellow)</td></tr>
+<tr><td class="mono">M2B</td><td>Motor 2 (leg 120°) · <span class="mono">6 M−</span></td><td><span class="sw" style="background:var(--wmotn)"></span>motor pin 6, M− (white)</td></tr>
+<tr><td class="mono">VB+</td><td>Wago +12 V (A) · <span class="mono">2</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">VB−</td><td>Wago GND (1) · <span class="mono">3</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">M1A in</td><td>Arduino Mega 2560 · <span class="mono">D6</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">M1B in</td><td>Arduino Mega 2560 · <span class="mono">D7</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">M2A in</td><td>Arduino Mega 2560 · <span class="mono">D8</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">M2B in</td><td>Arduino Mega 2560 · <span class="mono">D44</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Cytron MDD3A #2 (motor 3)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">M1A</td><td>Motor 3 (leg 240°) · <span class="mono">1 M+</span></td><td><span class="sw" style="background:var(--wmotp)"></span>motor pin 1, M+ (yellow)</td></tr>
+<tr><td class="mono">M1B</td><td>Motor 3 (leg 240°) · <span class="mono">6 M−</span></td><td><span class="sw" style="background:var(--wmotn)"></span>motor pin 6, M− (white)</td></tr>
+<tr><td class="mono">VB+</td><td>Wago +12 V (A) · <span class="mono">3</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">VB−</td><td>Wago GND (1) · <span class="mono">4</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">M1A in</td><td>Arduino Mega 2560 · <span class="mono">D45</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+<tr><td class="mono">M1B in</td><td>Arduino Mega 2560 · <span class="mono">D46</span></td><td><span class="sw" style="background:var(--wpwm)"></span>Dupont</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Motor 1 (leg 0°)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">3 A</td><td>Arduino Mega 2560 · <span class="mono">D2</span></td><td><span class="sw" style="background:var(--wencA)"></span>motor pin 3, A (blue) to Dupont</td></tr>
+<tr><td class="mono">4 B</td><td>Arduino Mega 2560 · <span class="mono">D19</span></td><td><span class="sw" style="background:var(--wencB)"></span>motor pin 4, B (purple) to Dupont</td></tr>
+<tr><td class="mono">1 M+</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M1A</span></td><td><span class="sw" style="background:var(--wmotp)"></span>motor pin 1, M+ (yellow)</td></tr>
+<tr><td class="mono">2 GND</td><td>Wago GND (3) · <span class="mono">2</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5 5V</td><td>Wago +5 V · <span class="mono">2</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">6 M−</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M1B</span></td><td><span class="sw" style="background:var(--wmotn)"></span>motor pin 6, M− (white)</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Motor 2 (leg 120°)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">3 A</td><td>Arduino Mega 2560 · <span class="mono">D3</span></td><td><span class="sw" style="background:var(--wencA)"></span>motor pin 3, A (blue) to Dupont</td></tr>
+<tr><td class="mono">4 B</td><td>Arduino Mega 2560 · <span class="mono">D20</span></td><td><span class="sw" style="background:var(--wencB)"></span>motor pin 4, B (purple) to Dupont</td></tr>
+<tr><td class="mono">1 M+</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M2A</span></td><td><span class="sw" style="background:var(--wmotp)"></span>motor pin 1, M+ (yellow)</td></tr>
+<tr><td class="mono">2 GND</td><td>Wago GND (3) · <span class="mono">3</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5 5V</td><td>Wago +5 V · <span class="mono">3</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">6 M−</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">M2B</span></td><td><span class="sw" style="background:var(--wmotn)"></span>motor pin 6, M− (white)</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Motor 3 (leg 240°)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">3 A</td><td>Arduino Mega 2560 · <span class="mono">D18</span></td><td><span class="sw" style="background:var(--wencA)"></span>motor pin 3, A (blue) to Dupont</td></tr>
+<tr><td class="mono">4 B</td><td>Arduino Mega 2560 · <span class="mono">D21</span></td><td><span class="sw" style="background:var(--wencB)"></span>motor pin 4, B (purple) to Dupont</td></tr>
+<tr><td class="mono">1 M+</td><td>Cytron MDD3A #2 (motor 3) · <span class="mono">M1A</span></td><td><span class="sw" style="background:var(--wmotp)"></span>motor pin 1, M+ (yellow)</td></tr>
+<tr><td class="mono">2 GND</td><td>Wago GND (3) · <span class="mono">4</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5 5V</td><td>Wago +5 V · <span class="mono">4</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">6 M−</td><td>Cytron MDD3A #2 (motor 3) · <span class="mono">M1B</span></td><td><span class="sw" style="background:var(--wmotn)"></span>motor pin 6, M− (white)</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Touch-panel tail connector</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1 Y−</td><td>Arduino Mega 2560 · <span class="mono">A3</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">2 X−</td><td>Arduino Mega 2560 · <span class="mono">A2</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">3 Y+</td><td>Arduino Mega 2560 · <span class="mono">A1</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+<tr><td class="mono">4 X+</td><td>Arduino Mega 2560 · <span class="mono">A0</span></td><td><span class="sw" style="background:var(--wtouch)"></span>Dupont</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>POWER button</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">C</td><td>Wago GND (4) · <span class="mono">3</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">NC</td><td>Arduino Mega 2560 · <span class="mono">D31</span></td><td><span class="sw" style="background:var(--wbtn)"></span>button harness to Dupont</td></tr>
+<tr><td class="mono">NO</td><td>Pololu #2813 soft power switch · <span class="mono">A</span></td><td><span class="sw" style="background:var(--wbtn)"></span>button harness to Dupont</td></tr>
+<tr><td class="mono">LED+</td><td>Wago +12 V (B) · <span class="mono">3</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">LED−</td><td>Wago GND (4) · <span class="mono">2</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>MODE button</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">C</td><td>Wago GND (4) · <span class="mono">5</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">NO</td><td>Arduino Mega 2560 · <span class="mono">D30</span></td><td><span class="sw" style="background:var(--wbtn)"></span>button harness to Dupont</td></tr>
+<tr><td class="mono">LED+</td><td>Wago +12 V (B) · <span class="mono">4</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">LED−</td><td>Wago GND (4) · <span class="mono">4</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago +12 V (A)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Pololu #2813 soft power switch · <span class="mono">VOUT</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">2</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">VB+</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>Cytron MDD3A #2 (motor 3) · <span class="mono">VB+</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>Arduino Mega 2560 · <span class="mono">VIN</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">5</td><td>Wago +12 V (B) · <span class="mono">1</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago +12 V (B)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Wago +12 V (A) · <span class="mono">5</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+<tr><td class="mono">2</td><td>DROK 12→5 V buck · <span class="mono">IN+</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>POWER button · <span class="mono">LED+</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>MODE button · <span class="mono">LED+</span></td><td><span class="sw" style="background:var(--w12)"></span>red, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago +5 V</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>DROK 12→5 V buck · <span class="mono">OUT+</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">2</td><td>Motor 1 (leg 0°) · <span class="mono">5 5V</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>Motor 2 (leg 120°) · <span class="mono">5 5V</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>Motor 3 (leg 240°) · <span class="mono">5 5V</span></td><td><span class="sw" style="background:var(--w5)"></span>red/orange, 20 AWG</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago GND (1)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Panel jack (frame back tab) · <span class="mono">−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">2</td><td>Pololu #2813 soft power switch · <span class="mono">GND</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>Cytron MDD3A #1 (motors 1, 2) · <span class="mono">VB−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>Cytron MDD3A #2 (motor 3) · <span class="mono">VB−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5</td><td>Wago GND (2) · <span class="mono">1</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago GND (2)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Wago GND (1) · <span class="mono">5</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+<tr><td class="mono">2</td><td>Arduino Mega 2560 · <span class="mono">GND</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>DROK 12→5 V buck · <span class="mono">IN−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>DROK 12→5 V buck · <span class="mono">OUT−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5</td><td>Wago GND (3) · <span class="mono">1</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago GND (3)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Wago GND (2) · <span class="mono">5</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+<tr><td class="mono">2</td><td>Motor 1 (leg 0°) · <span class="mono">2 GND</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>Motor 2 (leg 120°) · <span class="mono">2 GND</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>Motor 3 (leg 240°) · <span class="mono">2 GND</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5</td><td>Wago GND (4) · <span class="mono">1</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+</tbody></table></div></section>
+<section class="tbl"><h3>Wago GND (4)</h3><div class="scroll"><table><thead><tr><th>Pin</th><th>Goes to</th><th>Wire</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Wago GND (3) · <span class="mono">5</span></td><td><span class="sw" style="background:var(--wlink)"></span>short jumper, same colour as its bus</td></tr>
+<tr><td class="mono">2</td><td>POWER button · <span class="mono">LED−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">3</td><td>POWER button · <span class="mono">C</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">4</td><td>MODE button · <span class="mono">LED−</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+<tr><td class="mono">5</td><td>MODE button · <span class="mono">C</span></td><td><span class="sw" style="background:var(--wgnd)"></span>black, 20 AWG</td></tr>
+</tbody></table></div></section></div>
+</main>

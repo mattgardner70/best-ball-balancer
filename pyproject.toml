@@ -1,0 +1,17 @@
+[project]
+name = "best-ball-balancer"
+version = "0.1.0"
+description = "A silent 3-RRS ball balancer: CAD, simulation and firmware"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+dependencies = [
+    "cadquery>=2.8.0",
+    "mujoco>=3.2",
+    "numpy>=1.26",
+    "pyserial>=3.5",
+    "scipy>=1.18.1",
+    "shapely>=2.2.0",
+]
+
+[tool.uv]
+package = false
