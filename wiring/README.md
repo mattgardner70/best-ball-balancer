@@ -2,11 +2,6 @@
 
 Everything you need to wire the balancer: 56 connections between the power jack, the soft power switch, the Wago lever connectors, the Arduino Mega, two motor drivers, three motors, the touch panel and the two buttons.
 
-## Watch it first
-
-[![Every wire, one connection at a time](../images/assembly/wiring_top_poster.png)](../images/assembly/wiring_top.mp4)
-
-
 
 https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e
 
