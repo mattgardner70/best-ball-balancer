@@ -17,6 +17,7 @@ About **$229** in parts at the listed prices, plus the three motors and two moto
 
 | Part | Qty used | Buy | Price | Where |
 |---|---|---|---|---|
+| Heatsinks, 9 × 9 × 5 mm aluminium, with 3M 8810 thermal tape | 8 | 1 pack of 20 | — | [Easycargo B079FQ22LK](https://www.amazon.com/dp/B079FQ22LK) |
 | Arduino Mega 2560 R3 | 1 | 1 | $22.99 | [ELEGOO B01H4ZDYCE](https://www.amazon.com/dp/B01H4ZDYCE) |
 | Cytron MDD3A dual motor driver, 4–16 V, 3 A/channel | 2 | 2 | — | [Cytron MDD3A](https://www.cytron.io/p-3amp-4v-16v-dc-motor-driver-2-channels) |
 | 8.4" 4-wire resistive touch panel | 1 | 1 | $38.88 | [VSDISPLAY B07TZGVY8K](https://www.amazon.com/dp/B07TZGVY8K) |
@@ -34,13 +35,14 @@ About **$229** in parts at the listed prices, plus the three motors and two moto
 | Lever connectors (5-port × 6, 4-port × 3 used) | 8 | 1 assortment | $9.99 | [Amazon B0FRFM8JQC](https://www.amazon.com/dp/B0FRFM8JQC) |
 | 20 AWG red/black zip cable | ~3 m | 1 spool | $7.99 | [EvZ B00WKHXHYW](https://www.amazon.com/dp/B00WKHXHYW) |
 | Dupont jumper leads, 20 cm (M-F / F-F) | ~30 | 1 pack of 120 | $6.98 | [ELEGOO B01EV70C78](https://www.amazon.com/dp/B01EV70C78) |
-| Small zip ties, 2.5 mm | ~15 | 1 pack | — | any |
+| Small zip ties, 2.5 mm | ~20 | 1 pack | — | any |
+| Double-sided foam mounting tape | a few cm | 1 roll | — | any (holds the Pololu board on its plate) |
 
 ## Fasteners
 
 | Part | Qty used | Buy | Price | Where |
 |---|---|---|---|---|
-| M3 × 5.7 heat-set inserts | 24 | 1 pack of 100 | $9.99 | [ruthex B08BCRZZS3](https://www.amazon.com/dp/B08BCRZZS3) |
+| M3 × 5.7 heat-set inserts | 36 | 1 pack of 100 | $9.99 | [ruthex B08BCRZZS3](https://www.amazon.com/dp/B08BCRZZS3) |
 | M3 socket-head screw kit with nuts | see below | 1 kit | $9.99 | [Fgruh B0FG2BRXL3](https://www.amazon.com/dp/B0FG2BRXL3) |
 | M3 × 16 grub screws (rod studs) | 3 | 1 pack of 50 | $7.89 | [uxcell B01AXVSM6O](https://www.amazon.com/dp/B01AXVSM6O) |
 | M2.5 × 8 screws (MDD3A mounts) | 8 | 1 pack | — | any |
@@ -49,13 +51,14 @@ About **$229** in parts at the listed prices, plus the three motors and two moto
 
 | Screw | Qty | Where |
 |---|---|---|
-| M3 × 10 | 12 | Motor straps into the saddle inserts |
-| M3 × 6 | 6 | Arduino Mega onto its wall |
+| M3 × 12 | 12 | Motor straps into the saddle inserts |
 | M3 × 12 | 12 | Flange couplings onto the arms |
+| M3 × 8 | 12 | Board holders onto the base plate (Mega 6, drivers 4, switch 2) |
+| M3 × 6 | 6 | Arduino Mega onto its holder |
 | M3 nut | 3 | Jam nuts on the rod studs |
 | M2.5 × 8 | 8 | MDD3A boards onto their standoffs (they self-tap into the printed posts) |
 
-**Heat-set inserts (24):** motor saddles 12, Mega wall 6, rod tops 3, arm elbows 3.
+**Heat-set inserts (36):** motor saddles 12, holder pads on the base plate 12, Mega holder standoffs 6, rod tops 3, arm elbows 3.
 
 ## Printed parts
 
@@ -63,8 +66,11 @@ About **650 g** of PLA and about **30 hours** on a Bambu Lab P1S (every part fit
 
 | Part | Qty | Colour | File | Notes |
 |---|---|---|---|---|
-| base_plate | 1 | white | [`base_plate.stl`](../stl/base_plate.stl) | The chassis: motor saddles, Mega wall, driver wall, power-switch bracket, buck tray, tie loops. |
-| strap_motor | 3 | white | [`strap_motor.stl`](../stl/strap_motor.stl) | Clamps the motor body. Flattened arch: tightening the screws preloads it. |
+| base_plate | 1 | white | [`base_plate.stl`](../stl/base_plate.stl) | The chassis: motor saddles, insert pads for the board holders, buck tray, tie loops, and a raised number under each motor. |
+| mega_mount | 1 | white | [`mega_mount.stl`](../stl/mega_mount.stl) | Upright wall for the Arduino Mega, six tabs. Print lying on its back, standoffs up. |
+| driver_mount | 1 | white | [`driver_mount.stl`](../stl/driver_mount.stl) | Wall carrying both MDD3As back to back, four tabs. Print standing up. |
+| switch_mount | 1 | white | [`switch_mount.stl`](../stl/switch_mount.stl) | Small plate for the Pololu switch (foam tape + zip tie), two tabs. Print standing up. |
+| strap_motor | 3 | white | [`strap_motor.stl`](../stl/strap_motor.stl) | Clamps the motor body. Flattened arch that springs about 2.5 mm as the screws tighten. |
 | strap_gearbox | 3 | white | [`strap_gearbox.stl`](../stl/strap_gearbox.stl) | Clamps the gearbox. Same preloaded arch. |
 | arm | 3 | PETG | [`arm.stl`](../stl/arm.stl) | Holds the flange coupling; M3 insert in the elbow. |
 | rod | 3 | PETG | [`rod.stl`](../stl/rod.stl) | Elbow eye with a pressed bronze bushing; M3 insert on top for the stud. |
@@ -76,4 +82,4 @@ About **650 g** of PLA and about **30 hours** on a Bambu Lab P1S (every part fit
 
 ## Tools
 
-Soldering iron (about 10 joints on the power switch), heat-set insert tip, multimeter, hex keys, flush cutters, 3D printer.
+Soldering iron (about 10 joints on the power switch), heat-set insert tip, multimeter, hex keys, a 5.5 mm wrench, flush cutters, 3D printer.

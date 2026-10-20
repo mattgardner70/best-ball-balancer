@@ -72,7 +72,7 @@ You need **Python 3.12** and [**uv**](https://docs.astral.sh/uv/) (a fast Python
 
 | File | Parts |
 |---|---|
-| [`chassis.py`](chassis.py) | Base plate (motor saddles, Mega wall, driver wall, power-switch bracket, buck tray), motor straps |
+| [`chassis.py`](chassis.py) | Base plate (motor saddles, insert pads, buck tray, tie loops), motor straps, and the bolt-on holders for the Mega, the motor drivers and the power switch |
 | [`parts.py`](parts.py) | Arms, rods, plate holder (base and rim) |
 | [`enclosure.py`](enclosure.py) | Frame with the button console, Voronoi lattice shell, liner |
 | [`hardware.py`](hardware.py) | Bought parts (motors, couplings, bolts, ball joints), modelled for the simulation only |

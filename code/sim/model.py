@@ -37,7 +37,7 @@ def build_xml() -> str:
     assets = "".join(f'<mesh name="{n}" file="{n}.stl" scale="0.001 0.001 0.001"/>'
                      for n in ("arm", "rod", "plate_holder_base", "plate_holder_rim", "lattice_shell", "frame", "liner", "ga37", "hub",
                                "shoulder_bolt", "bushing", "ball_stud", "ball_socket", "stud_m3",
-                               "base_plate", "strap_gearbox", "strap_motor", "button", "button_ring") if have(n))
+                               "base_plate", "strap_gearbox", "strap_motor", "mega_mount", "driver_mount", "switch_mount", "button", "button_ring") if have(n))
     # Stack along each shaft, from the rod's plane (y = 0 in the arm frame), in mm.
     from CAD.chassis import MOTOR_FACE
     from CAD.parts import ARM_NEAR, ARM_T, EYE_HALF, SHOULDER_END
@@ -168,6 +168,9 @@ def _chassis_geoms(have) -> str:
     white = 'rgba="0.95 0.95 0.93 1"'
     if have("base_plate"):
         out.append(f'<geom type="mesh" mesh="base_plate" class="fixed" {white}/>')
+    for n in ("mega_mount", "driver_mount", "switch_mount"):          # bolt-on holders (world coordinates)
+        if have(n):
+            out.append(f'<geom type="mesh" mesh="{n}" class="fixed" rgba="0.85 0.87 0.9 1"/>')
     rs = GEOMETRY.motor_radius
     for a in GEOMETRY.leg_angles_deg:
         r = np.radians(a)
@@ -195,8 +198,7 @@ def _chassis_geoms(have) -> str:
         out.append(box((x, ch.DRIVER_Y, z0 + dl / 2), (0.8, dw / 2, dl / 2), "0.08 0.08 0.1 1"))
         out.append(box((x + side * 6, ch.DRIVER_Y, z0 + dl - 6), (5.5, dw / 2 - 3, 5), "0.1 0.1 0.1 1"))   # terminal blocks
     px, py = ch.POWER_SWITCH_AT
-    sw, sh = ch.POWER_SWITCH[1], ch.POWER_SWITCH[0]
-    out.append(box((px, py, ch.SWITCH_Z + sh / 2), (sw / 2, 0.8, sh / 2), "0.1 0.35 0.15 1"))       # the green Pololu
+    out.append(box((px + 0.8, py, ch.PLATE_T + 4 + 12.7), (0.8, 10.15, 12.7), "0.1 0.35 0.15 1"))      # the green Pololu
     bx2, by2 = ch.BUCK_AT
     out.append(box((bx2, by2, ch.PLATE_T + 7), (13.5, 23.0, 7.0), "0.2 0.2 0.22 1"))                   # 5 V buck (sealed case)
     jx, _, _, jz = en.POWER_TAB

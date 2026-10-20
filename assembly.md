@@ -21,6 +21,9 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 | Part | Qty | Orientation |
 |---|---|---|
 | [`base_plate`](stl/base_plate.stl) | 1 | Flat, as modelled |
+| [`mega_mount`](stl/mega_mount.stl) | 1 | Lying on its back, standoffs up |
+| [`driver_mount`](stl/driver_mount.stl) | 1 | Standing up, on its tabs |
+| [`switch_mount`](stl/switch_mount.stl) | 1 | Standing up, on its tabs |
 | [`strap_motor`](stl/strap_motor.stl), [`strap_gearbox`](stl/strap_gearbox.stl) | 3 each | Arch up |
 | [`arm`](stl/arm.stl) | 3 | Flat |
 | [`rod`](stl/rod.stl) | 3 | Standing up |
@@ -32,13 +35,14 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 
 ## 2. Set the heat-set inserts
 
-Press **24 M3 inserts** with a soldering iron and insert tip, flush with the surface:
+Press **36 M3 inserts** with a soldering iron and insert tip, flush with the surface:
 
-- **Base plate:** 12 in the motor saddles (two beside each strap) and 6 in the Mega wall standoffs.
+- **Base plate:** 12 in the motor saddles (two beside each strap) and 12 in the raised pads the board holders screw onto.
+- **Mega holder:** 6 in its standoffs.
 - **Arms:** 1 in each elbow tip.
 - **Rods:** 1 in each top face.
 
-The MDD3A standoffs on the driver wall don't take inserts: their M2.5 screws tap straight into the plastic.
+The MDD3A standoffs on the driver holder don't take inserts: their M2.5 screws tap straight into the plastic.
 
 ## 3. Build the three legs
 
@@ -54,9 +58,9 @@ For each leg:
 
 ## 4. Mount the motors
 
-1. Lay each motor in its two saddles, gearbox face against the lip, so the shaft points along its leg.
-2. Fit the **gearbox strap** and the **motor strap**, each with two **M3 × 10** screws.
-3. Tighten until the strap's ears touch the saddle. The straps are deliberately a little flat: when they're snug on the motor, the ears still sit about 1 mm high, so tightening flexes them and clamps the motor firmly. A motor that can shift in its saddle makes the plate imprecise.
+1. Lay each motor in its two saddles, gearbox face against the lip, so the shaft points along its leg. Each motor's number (**1**, **2**, **3**) is moulded into the floor under it.
+2. Fit the **gearbox strap** and the **motor strap**, each with two **M3 × 12** screws.
+3. Tighten until the strap's ears touch the saddle. The straps are deliberately flat: when they're snug on the motor, the ears still sit about 2.5 mm high, so tightening springs them down and clamps the motor firmly. A motor that can shift in its saddle makes the plate imprecise. The screws sit far enough from the arch to get a wrench on them.
 4. Slide each arm's coupling onto its motor's D-shaft and tighten both set screws onto the flat.
 
 > **Tip:** draw a line across the shaft, coupling and arm with a marker. If an arm ever slips on its shaft, you'll see it immediately.
@@ -65,11 +69,11 @@ For each leg:
 
 ![The driver wall beside the Mega](images/driver_wall.png)
 
-All the electronics sit at one end of the base plate, so the signal wires stay short.
+Every board has its own printed holder, so you can mount and wire each board on the bench, then screw the holder down with **M3 × 8** screws into the pads on the base plate.
 
-1. **Arduino Mega:** screw it to the tall wall with six **M3 × 6** screws, USB end toward the back corner. It stands 9 mm off the floor so the plugs on its bottom header have room.
-2. **Motor drivers:** the two **Cytron MDD3A** boards go back to back on the driver wall, one on each face, with four **M2.5 × 8** screws each. Mount them terminal blocks up, input header down.
-3. **Power switch:** slide the **Pololu** board into its bracket on the back edge, terminal end first, until it hits the stop.
+1. **Arduino Mega:** screw it to its holder with six **M3 × 6** screws, USB end toward the back. It stands 9 mm off the floor so the plugs on its bottom header have room. Use a **right-angle USB-B cable**: there isn't room for a straight plug with the shell on.
+2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M2.5 × 8** screws each: terminal blocks up, input header down.
+3. **Power switch:** stick the **Pololu** board onto its holder plate with double-sided foam tape, terminals facing out, and loop a zip tie through the two slots and across the board. It sits by the left wall, facing the centre, close to the power jack.
 4. **Buck converter:** drop it into its tray and strap it down with a zip tie through the two slots.
 5. **Plate holder:** glue the rim onto the plate-holder base, then drop the touch panel in.
 6. **Buttons and jack:** fit the two buttons in the console face (red POWER on the left, blue MODE on the right) and the barrel jack in the frame's back tab.
@@ -136,3 +140,4 @@ Once you like a setting, write it into [`balance.ino`](code/firmware/balance/bal
 | The plate leans with the ball at centre | Leg trims (`1` `2` `3`), or an arm slipping on its shaft |
 | Jitter near the edges | Ball is beyond the panel's active area; keep patterns inside it |
 | The ball "isn't seen" | Panel tail wires: A0–A3, see the wiring diagram |
+| A motor driver runs hot | Check its heatsinks are on; run without the liner for more airflow |
