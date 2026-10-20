@@ -117,7 +117,7 @@ uv run python -m CAD.build
 
 | Stage | Hours | |
 |---|---|---|
-| 3D printing | **30** | Mostly unattended. The base plate, frame and shell are the long prints. |
+| 3D printing | **30** | Mostly unattended. The base plate, frame and shell are the long prints. Note: The bulk of the time is mostly the shells and covers. The base + plate + arms + board mounts is ~8 hours of printing time. |
 | Wiring | **5** | Lever connectors and Dupont leads; about 10 solder joints in total. Follow the [wiring video](https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e) and the [wiring PDF](wiring/wiring.pdf). |
 | Integration hell | **5** | Things always go wrong: a loose wire, a reversed motor, a calibration that needs redoing. Budget for it. |
 | **Total** | **~40** | |
