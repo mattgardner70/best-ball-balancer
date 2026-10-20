@@ -37,7 +37,7 @@ cd code && uv run python tools/wiring_anim.py            # -> images/assembly/wi
 ## Before you power it on
 
 - Connect the motors last. Power up once without them and check with a meter: **12 V** on the +12 V Wagos and **5.0 V** on the +5 V Wago.
-- **Never** connect 12 V to a driver's or the Mega's 5 V pin. That's how the first motor driver died.
+- **Never** connect 12 V to a driver's or the Mega's 5 V pin.
 - Leave both MDD3As' 5V pins unconnected: they're outputs from the boards' own regulators.
 - Motor connector pins, left to right: 1 M+ (yellow), 2 GND (black), 3 A (blue), 4 B (purple), 5 5V (red), 6 M− (white).
 - Button harness colours vary by batch: check LED+, LED−, C, NO and NC with a meter before connecting.

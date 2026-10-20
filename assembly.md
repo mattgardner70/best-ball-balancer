@@ -90,7 +90,7 @@ Watch the **[wiring video](images/assembly/wiring_top.mp4)** (7½ min, top-down)
 
 Before connecting the motors, power it once and check with a meter: 12 V on the +12 V bus and 5.0 V on the +5 V bus.
 
-> **Never** connect 12 V to a driver's or the Mega's 5 V pin. That's how the first motor driver died.
+> **Never** connect 12 V to a driver's or the Mega's 5 V pin.
 
 ## 7. Close it up
 
