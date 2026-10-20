@@ -1,12 +1,12 @@
 # Bill of materials
 
-About **$236** in parts at the listed prices, plus the three motors and two motor drivers, which aren't priced here. Links are the listings used for this build; equivalent parts work.
+About **$279** in parts at the listed prices (three motors at $14.40 each included), plus the two motor drivers, which aren't priced here. Links are the listings used for this build; equivalent parts work.
 
 ## Motion
 
 | Part | Qty used | Buy | Price | Where |
 |---|---|---|---|---|
-| GA37-520 (JGB37-520) 12 V gearmotor with hall encoder, 333 rpm | 3 | 3 | — | [Sileduove B0H4TS383B](https://www.amazon.com/dp/B0H4TS383B) |
+| GA37-520 (JGB37-520) 12 V gearmotor with hall encoder, 333 rpm | 3 | 3 | $14.40 each | [Sileduove B0H4TS383B](https://www.amazon.com/dp/B0H4TS383B) |
 | 6 mm rigid flange coupling, 22 mm flange, 4-hole | 3 | 1 pack of 4 | $6.98 | [Amazon B08334N261](https://www.amazon.com/dp/B08334N261) |
 | Shoulder bolt, 4 × 10 mm shoulder, M3 × 6 thread (elbow pin) | 3 | 1 pack of 12 | $7.97 | [uxcell B0DP71MPP7](https://www.amazon.com/dp/B0DP71MPP7) |
 | Flanged bronze bushing, 4 mm bore × 8 mm OD (elbow) | 3 | 1 pack of 6 | $5.99 | [HARFINGTON B0CGDT9YYW](https://www.amazon.com/dp/B0CGDT9YYW) |
