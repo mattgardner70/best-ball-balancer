@@ -8,7 +8,7 @@ Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is;
 
 | | |
 |---|---|
-| **Build** | [Assembly guide](assembly.md) · [Bill of materials](BOM/BOM.md) · [Wiring diagram (PDF)](wiring/wiring.pdf) |
+| **Build** | [Assembly guide](assembly.md) (animated, step by step) · [Bill of materials](BOM/BOM.md) · [Wiring guide](wiring/README.md) with a [wire-by-wire video](images/assembly/wiring_top.mp4) |
 | **Files** | [3D-printable parts](stl/) · [CAD source](CAD/) · [Firmware](code/firmware/balance/balance.ino) · [Simulation](code/sim/) |
 | **Power** | 12–20 W from a 12 V wall adapter |
 | **Time** | About 40 hours, most of it printing ([breakdown](#time-estimate)) |
@@ -132,7 +132,7 @@ uv run python -m CAD.build
 | [`CAD/`](CAD/) | CadQuery source for every part ([`build.py`](CAD/build.py) exports them all) |
 | [`code/firmware/`](code/firmware/) | The balancer firmware, plus four bring-up test sketches |
 | [`code/sim/`](code/sim/) | MuJoCo model, controller and interactive viewer |
-| [`code/tools/`](code/tools/) | A serial console for live tuning |
+| [`code/tools/`](code/tools/) | A serial console for live tuning, and the scripts that render the assembly animations and the wiring video |
 | [`BOM/`](BOM/BOM.md) | Bill of materials with links |
-| [`wiring/`](wiring/wiring.pdf) | Wiring diagram and wire list (PDF), and the script that draws it |
-| [`assembly.md`](assembly.md) | Step-by-step build guide |
+| [`wiring/`](wiring/README.md) | Wiring guide, diagram and wire list (PDF), and the script that draws it |
+| [`assembly.md`](assembly.md) | Step-by-step build guide, with an animation for each stage |

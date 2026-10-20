@@ -1,16 +1,17 @@
 # Assembly guide
 
-Seven stages, from a pile of parts to a balancing ball. Keep the [bill of materials](BOM/BOM.md) and the [wiring diagram](wiring/wiring.pdf) open alongside.
+Eight stages, from a pile of parts to a balancing ball. Each one has an animation showing the parts going together in order. Keep the [bill of materials](BOM/BOM.md) and the [wiring diagram](wiring/wiring.pdf) open alongside.
 
 | Stage | What | Time |
 |---|---|---|
 | [1](#1-print-the-parts) | Print the parts | ~30 h (unattended) |
 | [2](#2-set-the-heat-set-inserts) | Set the heat-set inserts | 20 min |
-| [3](#3-build-the-three-legs) | Build the three legs | 45 min |
-| [4](#4-mount-the-motors) | Mount the motors | 30 min |
+| [3](#3-mount-the-motors) | Mount the motors | 30 min |
+| [4](#4-build-the-legs) | Build the legs | 45 min |
 | [5](#5-mount-the-electronics) | Mount the electronics | 30 min |
 | [6](#6-wire-it) | Wire it | ~5 h |
-| [7](#7-bring-it-to-life) | Flash, calibrate, tune | 1–5 h (integration hell) |
+| [7](#7-close-it-up) | Close it up: frame, shell, plate | 30 min |
+| [8](#8-bring-it-to-life) | Flash, calibrate, tune | 1–5 h (integration hell) |
 
 ---
 
@@ -44,30 +45,31 @@ Press **36 M3 inserts** with a soldering iron and insert tip, flush with the sur
 
 The MDD3A standoffs on the driver holder don't take inserts: their M2.5 screws tap straight into the plastic.
 
-## 3. Build the three legs
+## 3. Mount the motors
 
-![One leg](images/leg.png)
-
-For each leg:
-
-1. **Coupling onto the arm.** Seat the flange coupling's collar in the arm's pocket and bolt the flange on with four **M3 × 12** screws.
-2. **Bushing into the rod.** Press a flanged bronze bushing into the rod's elbow eye, from the side the bolt head will be on.
-3. **Elbow.** Pass a **shoulder bolt** through the bushing and thread it into the arm's elbow insert. The rod should swing freely with no play.
-4. **Stud.** Thread an **M3 × 16 grub screw** into the rod's top insert, and lock it with an **M3 nut** against the rod face.
-5. **Ball joint.** Screw a **tie-rod end** socket onto the stud. You'll set its height when the plate goes on.
-
-## 4. Mount the motors
+![Motors into their saddles, then the straps](images/assembly/1_base_motors.gif)
 
 1. Lay each motor in its two saddles, gearbox face against the lip, so the shaft points along its leg. Each motor's number (**1**, **2**, **3**) is moulded into the floor under it.
 2. Fit the **gearbox strap** and the **motor strap**, each with two **M3 × 12** screws.
 3. Tighten until the strap's ears touch the saddle. The straps are deliberately flat: when they're snug on the motor, the ears still sit about 2.5 mm high, so tightening springs them down and clamps the motor firmly. A motor that can shift in its saddle makes the plate imprecise. The screws sit far enough from the arch to get a wrench on them.
-4. Slide each arm's coupling onto its motor's D-shaft and tighten both set screws onto the flat.
+
+## 4. Build the legs
+
+![Hub, arm, bushing, shoulder bolt, rod end](images/assembly/2_legs.gif)
+
+Each leg goes together on its motor, in this order:
+
+1. **Hub onto the shaft.** Slide the flange coupling onto the motor's D-shaft and tighten its set screw onto the flat.
+2. **Arm onto the hub.** Fit the arm over the coupling's flange and bolt it on with four **M3 × 12** screws.
+3. **Bushing into the rod.** Heat-press the flanged bronze bushing into the rod's elbow eye, from the side the bolt head will be on.
+4. **Rod onto the arm.** Pass a **shoulder bolt** through the bushing and thread it into the arm's elbow insert. The rod should swing freely with no play.
+5. **Rod end.** Thread an **M3 × 16 grub screw** into the rod's top insert and lock it with an **M3 nut**, then screw the **tie-rod end** socket onto it.
 
 > **Tip:** draw a line across the shaft, coupling and arm with a marker. If an arm ever slips on its shaft, you'll see it immediately.
 
 ## 5. Mount the electronics
 
-![The driver wall beside the Mega](images/driver_wall.png)
+![Each board on its holder, each holder onto the base](images/assembly/3_electronics.gif)
 
 Every board has its own printed holder, so you can mount and wire each board on the bench, then screw the holder down with **M3 × 8** screws into the pads on the base plate.
 
@@ -75,12 +77,12 @@ Every board has its own printed holder, so you can mount and wire each board on 
 2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M2.5 × 8** screws each: terminal blocks up, input header down.
 3. **Power switch:** stick the **Pololu** board onto its holder plate with double-sided foam tape, terminals facing out, and loop a zip tie through the two slots and across the board. It sits by the left wall, facing the centre, close to the power jack.
 4. **Buck converter:** drop it into its tray and strap it down with a zip tie through the two slots.
-5. **Plate:** slot the insert into the rim (it rests on the rim's step) with a few drops of super glue. Feed the panel's tail down through the slot in the insert, fold it back flat under the two clips, and lay the glass in.
-6. **Buttons and jack:** fit the two buttons in the console face (red POWER on the left, blue MODE on the right) and the barrel jack in the frame's back tab.
 
 ## 6. Wire it
 
-Follow the [wiring diagram](wiring/wiring.pdf). It shows every connection on one page per subsystem, with a wire list by part at the end.
+[![Every wire, one connection at a time (video)](images/assembly/wiring_top_poster.png)](images/assembly/wiring_top.mp4)
+
+Watch the **[wiring video](images/assembly/wiring_top.mp4)** (7½ min, top-down): it draws every one of the 56 connections in order, 8 seconds each, naming both ends. Follow along with the [wiring diagram](wiring/wiring.pdf), which has every connection on one page per subsystem and a wire list by part. More in the [wiring guide](wiring/README.md).
 
 - **Power and ground** run through lever connectors, one bus each for +12 V, +5 V and ground.
 - **Signals** are Dupont leads straight onto the Mega's pins.
@@ -90,7 +92,19 @@ Before connecting the motors, power it once and check with a meter: 12 V on the 
 
 > **Never** connect 12 V to a driver's or the Mega's 5 V pin. That's how the first motor driver died.
 
-## 7. Bring it to life
+## 7. Close it up
+
+![Frame, buttons, jack, base, shell, plate, ball](images/assembly/4_enclosure_plate.gif)
+
+1. **Buttons:** push the two buttons in through the console face (red POWER on the left, blue MODE on the right) and tighten their nuts from behind.
+2. **Jack:** fit the barrel jack into the frame's back tab from outside.
+3. **Base into the frame:** lower the wired base into the frame.
+4. **Shell:** lower the liner (optional) and the lattice shell over the mechanism, with the three rods coming up through the slots in the top.
+5. **Plate:** slot the insert into the rim (it rests on the rim's step) with a few drops of super glue. Feed the panel's tail down through the slot in the insert, fold it back flat under the two clips, and lay the glass in.
+6. **Plate onto the joints:** screw the plate's three nubs onto the ball joints.
+7. **Ball:** set the ball on the panel, and the spare in the console dish.
+
+## 8. Bring it to life
 
 ### Flash the firmware
 
@@ -98,7 +112,7 @@ See [Quick start](README.md#quick-start). Optional first: the four [bring-up ske
 
 ### First power-up
 
-Screw the plate's three nubs onto the ball joints and power on. The balancer will:
+Power on. The balancer will:
 
 1. **Home:** each arm creeps down until it stops against the base, then all three push down together to seat the plate.
 2. **Raise:** the arms lift the plate to level.
