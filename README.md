@@ -40,6 +40,22 @@ Two control loops run on the Mega:
 
 ![One leg: motor, arm, rod and ball joint](images/leg.png)
 
+## Modes
+
+The balancer doesn't just hold the ball still: it can steer it along a path. Each mode moves a target point around the plate, and the controller makes the ball follow it. A feed-forward term tilts the plate for each turn slightly before it's due, so the ball tracks the path instead of lagging behind it.
+
+| Mode | What the ball does |
+|---|---|
+| **Centre** | Sits still in the middle of the plate. |
+| **Circle** *(default)* | Rolls a 90 mm circle, one lap every 3.5 s. |
+| **Figure-8** | Traces a figure-8, 120 mm wide and 70 mm tall, one loop every 5.5 s. |
+| **Square** | Dashes between the corners of a 90 mm square, holding 1.5 s at each corner. |
+| **Wander** | Drifts slowly around the plate on a smooth, random-looking path. |
+
+It powers up in **circle**, and starts the moment a ball touches the panel. Each new mode glides out from the centre over 2 seconds rather than jumping.
+
+**Switching modes:** connect over USB and press `n` in the [console](code/tools/console.py) to step to the next mode (see [Talk to it](assembly.md#talk-to-it) for the other live keys). The MODE button on the console is already wired to the Mega (pin D30), ready for a firmware update that steps through the modes without a laptop.
+
 ## The story
 
 ### 1. Simulate first
