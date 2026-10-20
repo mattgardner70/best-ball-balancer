@@ -29,12 +29,23 @@ from CAD import enclosure as en  # noqa: E402
 from animate import Scene, camera  # noqa: E402
 
 OUT = ROOT / "images" / "assembly" / "wiring_top.mp4"
-W, H, FPS = 1280, 720, 20
-DRAW_S, HOLD_S = 2.0, 6.0
+W, H, FPS = 800, 880, 15
+DRAW_S, HOLD_S = 2.0, 3.0
 
-COLOURS = {"12v": "#d6332c", "5v": "#e8890c", "gnd": "#24282b", "link": "#8a939a", "mot+": "#e0a800",
-           "mot-": "#f2f2f2", "encA": "#3bc9db", "encB": "#be4bdb", "pwm": "#1971c2", "touch": "#0c8f73",
-           "btn": "#c2255c", "ctl": "#e8590c", "plug": "#24282b"}
+COLOURS = {"12v": "#7a0c0c", "5v": "#e8890c", "gnd": "#3a3a3d", "plug": "#3a3a3d",
+           "mot+": "#f2c200", "mot-": "#f4f4f4",                      # the motor leads' own yellow / white
+           "encA": "#1e6fd9", "encB": "#7b3fc4",                       # encoders: blue / purple
+           "pwm": "#f2c200", "ctl": "#f2c200",                         # signals: yellow ...
+           "touch": "#f4f4f4", "btn": "#f4f4f4"}                       # ... and white
+
+
+def wire_colour(cls, da, db):
+    if cls == "link":                                                  # Wago jumpers take their bus's colour
+        bus = da if da in WAGO_AT else db
+        return COLOURS["12v"] if bus.startswith("P12") else COLOURS["5v"] if bus.startswith("P5") else COLOURS["gnd"]
+    return COLOURS.get(cls, "#888888")
+
+
 mm = 1e-3
 
 
@@ -184,15 +195,18 @@ def add_box(scn, centre, half, colour):
 
 def caption(img, top, bottom):
     try:
-        big = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 30)
-        small = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 22)
+        big = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 24)
+        small = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 19)
     except OSError:
         big = small = ImageFont.load_default()
     d = ImageDraw.Draw(img)
-    for text, font, y in ((top, big, H - 92), (bottom, small, H - 48)):
+    for text, font, y in ((top, big, H - 84), (bottom, small, H - 44)):
         if not text:
             continue
         w = d.textlength(text, font=font)
+        while w > W - 40 and font.size > 12:                     # shrink long captions to fit
+            font = font.font_variant(size=font.size - 1)
+            w = d.textlength(text, font=font)
         d.rounded_rectangle((W / 2 - w / 2 - 14, y - 6, W / 2 + w / 2 + 14, y + font.size + 8), 8, fill=(20, 20, 24))
         d.text((W / 2 - w / 2, y), text, font=font, fill=(240, 240, 240))
     return img
@@ -217,10 +231,10 @@ def main():
         if a is None or b is None:
             continue
         label = f"{wiring.NAMES.get(da, da)} {pa}  to  {wiring.NAMES.get(db, db)} {pb}".replace("→", "-")
-        wires.append((arc(a, b), rgb(COLOURS.get(cls, "#888888")), label, wiring.WIRES[cls][1], "FPC" in (da, db)))
+        wires.append((arc(a, b), rgb(wire_colour(cls, da, db)), label, wiring.WIRES[cls][1], "FPC" in (da, db)))
 
     tmp = Path(tempfile.mkdtemp())
-    cam = camera(np.array([0.0, -0.012, 0.04]), 0.31, -90.0, 90)   # orthographic: view height = 2 d tan(fovy / 2)
+    cam = camera(np.array([0.0, -0.032, 0.04]), 0.36, -90.0, 90)   # orthographic: view height = 2 d tan(fovy / 2)
     cam.orthographic = 1                                # straight down, no perspective
 
     def frame(k, prog, title, sub, pulse=0.0):
@@ -273,7 +287,7 @@ def main():
         n += 1
 
     for _ in range(int(3 * FPS)):
-        put(frame(-2, 0, "Wiring, one connection at a time", f"{len(wires)} connections"))
+        put(frame(-2, 0, "Wiring instructions", f"{len(wires)} connections, one at a time"))
     for k, w in enumerate(wires):
         title, sub = f"{k + 1}/{len(wires)}   {w[2]}", w[3]
         for f in range(int((DRAW_S + HOLD_S) * FPS)):
@@ -284,7 +298,7 @@ def main():
     total = n
     OUT.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", str(tmp / "%05d.png"),
-                    "-c:v", "libx264", "-profile:v", "main", "-pix_fmt", "yuv420p", "-crf", "24", "-g", str(2 * FPS),
+                    "-c:v", "libx264", "-profile:v", "main", "-pix_fmt", "yuv420p", "-crf", "28", "-g", str(2 * FPS),
                     "-movflags", "+faststart", str(OUT)], check=True)
     shutil.rmtree(tmp)
     print(OUT, f"{OUT.stat().st_size / 1e6:.1f} MB, {len(wires)} wires, {total // FPS} s")
