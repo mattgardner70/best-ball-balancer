@@ -68,6 +68,30 @@ You need **Python 3.12** and [**uv**](https://docs.astral.sh/uv/) (a fast Python
 
 > **Want to click around a model?** [CQ-editor](https://github.com/CadQuery/CQ-editor) is a small GUI that runs CadQuery scripts with a live 3D view, and the [OCP CAD Viewer](https://marketplace.visualstudio.com/items?itemName=bernhard-42.ocp-cad-viewer) extension does the same inside VS Code.
 
+## Making changes
+
+Want different motors, another motor driver, a bigger touch panel, or a different microcontroller? The easiest way to swap a component is to let an AI assistant like **Claude** or **ChatGPT** do the CAD work for you. Because every part is code, it can read the whole design, change it, and rebuild it.
+
+1. **Open this repo with the assistant.** A coding assistant that can read and run files works best (for example Claude Code). A chat assistant works too if you paste in the relevant files.
+2. **Say what you're replacing, and with what.** Give it the part's datasheet or listing, especially the dimension drawing. For example:
+
+   > Replace the Cytron MDD3A motor drivers with two DRV8871 boards. Here's the datasheet: … Draw the new board from its dimension drawing, update the driver holder so it fits, and make sure it clears the motors and the Mega.
+
+3. **Let it model the new part from the datasheet,** then adjust everything around it: holders, mounting holes, clearances, cable routes.
+4. **Review it in the simulation.** Rebuild and look at it from every side before you print:
+
+   ```sh
+   uv run python -m CAD.build
+   cd code && uv run mjpython -m sim.view
+   ```
+
+   Ask for changes in plain words ("move it 5 mm toward the back wall", "make the clip a little looser") until it's right.
+5. **Print it.** The new STLs are already in [`stl/`](../stl/).
+
+Designing with an LLM and code-based CAD is **much easier, faster and more precise** than the old-fashioned way. You describe the change in a sentence, the assistant edits a few named dimensions, and every part that depends on them updates together. You never have to redraw a sketch or hunt down every place a dimension was used. Most of this project was designed exactly this way.
+
+> **Wiring and firmware too:** if a new part changes the pins or how it's driven (a different motor driver, for example), ask the assistant to update the [firmware](../code/firmware/balance/balance.ino) and the [wiring guide](../wiring/README.md) at the same time.
+
 ## What's in here
 
 | File | Parts |
