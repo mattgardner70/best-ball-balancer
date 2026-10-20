@@ -86,7 +86,8 @@ Want different motors, another motor driver, a bigger touch panel, or a differen
    ```
 
    Ask for changes in plain words ("move it 5 mm toward the back wall", "make the clip a little looser") until it's right.
-5. **Print it.** The new STLs are already in [`stl/`](../stl/).
+   
+I'm sure I'll get a lot of backlash from purists, but I've been using CAD for a long time, and the speed and accuracy of a frontier model combined with a pure code CAD solution like CADquery is faster and easier than doing it manually in something like Onshape, Fusion, or SolidWorks. It just is. Try it if you don't believe me.
 
 Designing with an LLM and code-based CAD is **much easier, faster and more precise** than the old-fashioned way. You describe the change in a sentence, the assistant edits a few named dimensions, and every part that depends on them updates together. You never have to redraw a sketch or hunt down every place a dimension was used. Most of this project was designed exactly this way.
 
