@@ -27,8 +27,8 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 | [`strap_motor`](stl/strap_motor.stl), [`strap_gearbox`](stl/strap_gearbox.stl) | 3 each | Arch up |
 | [`arm`](stl/arm.stl) | 3 | Flat |
 | [`rod`](stl/rod.stl) | 3 | Standing up |
-| [`plate_holder_base`](stl/plate_holder_base.stl) | 1 | Upside down, tabs up |
-| [`plate_holder_rim`](stl/plate_holder_rim.stl) | 1 | Flat |
+| [`plate_insert`](stl/plate_insert.stl) | 1 | Flat, nubs up |
+| [`plate_rim`](stl/plate_rim.stl) | 1 | Flat |
 | [`frame`](stl/frame.stl) | 1 | Open side down, supports under the console top |
 | [`lattice_shell`](stl/lattice_shell.stl) | 1 | Top face down |
 | [`liner`](stl/liner.stl) (optional) | 1 | Top face down |
@@ -75,7 +75,7 @@ Every board has its own printed holder, so you can mount and wire each board on 
 2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M2.5 × 8** screws each: terminal blocks up, input header down.
 3. **Power switch:** stick the **Pololu** board onto its holder plate with double-sided foam tape, terminals facing out, and loop a zip tie through the two slots and across the board. It sits by the left wall, facing the centre, close to the power jack.
 4. **Buck converter:** drop it into its tray and strap it down with a zip tie through the two slots.
-5. **Plate holder:** glue the rim onto the plate-holder base, then drop the touch panel in.
+5. **Plate:** slot the insert into the rim (it rests on the rim's step) with a few drops of super glue. Feed the panel's tail down through the slot in the insert, fold it back flat under the two clips, and lay the glass in.
 6. **Buttons and jack:** fit the two buttons in the console face (red POWER on the left, blue MODE on the right) and the barrel jack in the frame's back tab.
 
 ## 6. Wire it
@@ -98,7 +98,7 @@ See [Quick start](README.md#quick-start). Optional first: the four [bring-up ske
 
 ### First power-up
 
-Put the plate holder on the three ball joints and power on. The balancer will:
+Screw the plate's three nubs onto the ball joints and power on. The balancer will:
 
 1. **Home:** each arm creeps down until it stops against the base, then all three push down together to seat the plate.
 2. **Raise:** the arms lift the plate to level.

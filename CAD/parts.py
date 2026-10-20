@@ -17,12 +17,9 @@ PANEL_W, PANEL_H = 187.0, 141.0      # 8.4" resistive panel outline
 PANEL_T = 3.0                        # Matt measured ~3 mm (glass); about 198 g at 187 x 141 x 3
 PANEL_CLEAR = 1.0                    # per side, pocket around the panel (Matt: 1 mm looser than the first print)
 LIP_ABOVE_PANEL = 0.25 * IN          # Matt: 0.25" lip keeps the ball on
-FLOOR_T = 2.6                        # under the panel
+FLOOR_T = 2.6                        # the glass ledge's thickness
 WALL = 6.0                           # lip width
 CORNER_R = 10.0
-FPC_SLOT = (4.0, 30.0)               # tail slot through the floor, on the -x short side
-FPC_BREAKOUT = (21.0, 17.5)          # pocket for the panel's own crimped tail connector (4-pin 2.54 mm header); roomy on purpose
-BREAKOUT_AT = (-74.0, 0.0)           # under the plate, above the base's cable pass-through
 
 # --- joints (bought parts: cad/hardware.py) -----------------------------------
 from . import hardware as hw  # noqa: E402
@@ -60,69 +57,78 @@ def _holder_dims():
     return pocket_w, pocket_h, pocket_w + 2 * WALL, pocket_h + 2 * WALL, PANEL_T + LIP_ABOVE_PANEL
 
 
-def plate_holder_base() -> cq.Workplane:
-    """Flat floor the panel sits on, with the ball-link tabs below. The rim glues on top.
-    Print upside down (floor's top face on the bed, tabs up)."""
-    pocket_w, pocket_h, outer_w, outer_h, _ = _holder_dims()
-    body = (cq.Workplane("XY").sketch().rect(outer_w, outer_h).vertices().fillet(CORNER_R)
-            .finalize().extrude(FLOOR_T))
-    body = body.edges("<Z").fillet(1.5)
+LEDGE = 6.0                          # (used to place the joints' reach; the insert itself is solid)
+FPC_SLOT = (4.0, 30.0)               # the panel's tail goes down through the insert here, by the -x short side
+RIBBON_CLIP = (18.0, 1.8)            # bridges under the insert that hold the tail flat: opening width, gap (measure your tail)
+RIBBON_CLIP_X = (22.0, 48.0)         # their distance in from the tail slot, along +x
+INSERT_FIT = 0.2                     # per side, insert inside the rim
+STEP = 1.5                           # the rim's inward step the insert sits on (glued)
 
-    # FPC tail: slot through the floor against the -x pocket wall.
-    slot_x = -pocket_w / 2 + FPC_SLOT[0] / 2
-    body = body.cut(cq.Workplane("XY").center(slot_x, 0).slot2D(FPC_SLOT[1], FPC_SLOT[0], 90)
-                    .extrude(FLOOR_T + 0.1).translate((0, 0, -0.05)))
 
-    # Ball-link tabs: the stud runs sideways (tangential) through each tab, so the
-    # socket hangs from the ball with the rod below it.
+def _joint_layout():
+    """Per leg: (tab centre, arm end on the ledge, leg unit vector, tangent) in holder coordinates."""
+    pocket_w, pocket_h, _, _, _ = _holder_dims()
     r = GEOMETRY.plate_joint_radius * 1000
-    zb = -HOLDER_JOINT_DROP
     face = hw.BALL_D / 2 + 0.5 + hw.STUD_STANDOFF       # tab face, from the ball centre along the stud
-    tab_t, tab_w = 5.0, 12.0
-    centres = []
+    out = []
     for a in GEOMETRY.leg_angles_deg:
         rad = math.radians(a)
         u, t = (math.cos(rad), math.sin(rad)), (-math.sin(rad), math.cos(rad))
-        c = (r * u[0] + (face + tab_t / 2) * t[0], r * u[1] + (face + tab_t / 2) * t[1])
-        centres.append(c)
-        tab = (cq.Workplane("XY").center(*c).transformed(rotate=(0, 0, a)).rect(tab_w, tab_t)
-               .extrude(zb - 6).edges("<Z").fillet(2.0))
-        hole = (cq.Workplane(cq.Plane(origin=(c[0], c[1], zb), xDir=(u[0], u[1], 0), normal=(t[0], t[1], 0)))
-                .circle(1.65).extrude(tab_t, both=True))   # M3 clearance for the ball screw
-        body = body.union(tab).cut(hole)
-    # Shallow ribs joining the tabs stiffen the thin floor.
-    rib = cq.Workplane("XY")
-    for i in range(3):
-        (x1, y1), (x2, y2) = centres[i], centres[(i + 1) % 3]
-        length = math.hypot(x2 - x1, y2 - y1)
-        ang = math.degrees(math.atan2(y2 - y1, x2 - x1))
-        rib = rib.union(cq.Workplane("XY").center((x1 + x2) / 2, (y1 + y2) / 2)
-                        .transformed(rotate=(0, 0, ang)).rect(length, 4).extrude(-4))
-    body = body.union(rib)
-
-    # Pocket for the panel tail's crimped header connector on the underside, next to the tail slot: low walls, open on the
-    # cable side. The 4-wire ribbon drops from here to the base.
-    bw, bh = FPC_BREAKOUT[0] + 0.6, FPC_BREAKOUT[1] + 0.6
-    walls = (cq.Workplane("XY").center(*BREAKOUT_AT).rect(bw + 3, bh + 3).extrude(-3)
-             .cut(cq.Workplane("XY").center(*BREAKOUT_AT).rect(bw, bh).extrude(-3))
-             .cut(cq.Workplane("XY").center(BREAKOUT_AT[0] + bw / 2, BREAKOUT_AT[1]).rect(4, bh - 4).extrude(-3)))
-    return body.union(walls)
+        tab = (r * u[0] + (face + 2.5) * t[0], r * u[1] + (face + 2.5) * t[1])
+        # Arm end: straight out from the tab along the leg, to the middle of the ledge band (under the glass).
+        bx, by = pocket_w / 2 - INSERT_FIT - LEDGE / 2, pocket_h / 2 - INSERT_FIT - LEDGE / 2
+        kx = (bx - abs(tab[0])) / abs(u[0]) if abs(u[0]) > 1e-6 else 1e9
+        ky = (by - abs(tab[1])) / abs(u[1]) if abs(u[1]) > 1e-6 else 1e9
+        k = min(kx, ky)
+        out.append((tab, (tab[0] + k * u[0], tab[1] + k * u[1]), u, t))
+    return out
 
 
-def plate_holder_rim() -> cq.Workplane:
-    """Lip around the panel, 0.25" proud of the glass; glued onto the base's outer edge. Print flat."""
+def plate_rim() -> cq.Workplane:
+    """Outer wall and the 0.25" lip, with a STEP-wide ledge at the bottom the insert sits on (glued).
+    Nothing else shows from the side. Print flat."""
     pocket_w, pocket_h, outer_w, outer_h, depth = _holder_dims()
-    body = (cq.Workplane("XY").sketch().rect(outer_w, outer_h).vertices().fillet(CORNER_R)
-            .finalize().extrude(depth))
-    body = body.cut(cq.Workplane("XY").sketch().rect(pocket_w, pocket_h).vertices().fillet(1.5)
-                    .finalize().extrude(depth))
-    body = body.edges(">Z").fillet(1.2)                 # outer and inner top edges
-    return body.translate((0, 0, FLOOR_T))
+    h = FLOOR_T + depth
+    body = (cq.Workplane("XY").workplane(offset=-STEP).sketch().rect(outer_w, outer_h).vertices().fillet(CORNER_R)
+            .finalize().extrude(h + STEP))
+    body = body.cut(cq.Workplane("XY").sketch().rect(pocket_w, pocket_h).vertices().fillet(1.5).finalize().extrude(h))
+    body = body.cut(cq.Workplane("XY").workplane(offset=-STEP).sketch()
+                    .rect(pocket_w - 2 * STEP, pocket_h - 2 * STEP).vertices().fillet(1.5).finalize().extrude(STEP))
+    return body.edges(">Z").fillet(1.2)
+
+
+def plate_insert() -> cq.Workplane:
+    """The plate the glass sits on: a solid rectangle that slots into the rim onto its step (a little
+    super glue), with three nubs underneath for the ball joints, a slot for the panel's tail, and two
+    low bridges to tuck the tail flat under the plate.
+    The stud runs sideways (tangential) through each nub, so the socket hangs from the ball with the
+    rod below it. Print flat, nubs up."""
+    pocket_w, pocket_h, _, _, _ = _holder_dims()
+    w, h = pocket_w - 2 * INSERT_FIT, pocket_h - 2 * INSERT_FIT
+    body = cq.Workplane("XY").sketch().rect(w, h).vertices().fillet(1.3).finalize().extrude(FLOOR_T)
+    body = body.cut(cq.Workplane("XY").center(-w / 2 + 2.0 + FPC_SLOT[0] / 2, 0)
+                    .slot2D(FPC_SLOT[1], FPC_SLOT[0], 90).extrude(FLOOR_T))        # tail slot
+    # Ribbon clips: low bridges on the underside, in line with the tail slot, to tuck the tail flat under the plate.
+    slot_x = -w / 2 + 2.0 + FPC_SLOT[0] / 2
+    ow, gap = RIBBON_CLIP
+    for dx in RIBBON_CLIP_X:
+        clip = cq.Workplane("XY").center(slot_x + dx, 0).rect(6, ow + 6).extrude(-(gap + 1.6))
+        clip = clip.cut(cq.Workplane("XY").center(slot_x + dx, 0).rect(7, ow).extrude(-gap))
+        body = body.union(clip.edges("|X and <Z").fillet(0.6))
+    zb = -HOLDER_JOINT_DROP
+    tab_t, tab_w = 5.0, 12.0
+    for tab, _, u, t in _joint_layout():
+        a = math.degrees(math.atan2(u[1], u[0]))
+        body = body.union(cq.Workplane("XY").center(*tab).transformed(rotate=(0, 0, a)).rect(tab_w, tab_t)
+                          .extrude(zb - 6).edges("<Z").fillet(2.0))
+        body = body.cut(cq.Workplane(cq.Plane(origin=(tab[0], tab[1], zb), xDir=(u[0], u[1], 0), normal=(t[0], t[1], 0)))
+                        .circle(1.65).extrude(5, both=True))                       # M3 clearance for the ball screw
+    return body
 
 
 def plate_holder() -> cq.Workplane:
     """Both pieces as assembled (for the sim)."""
-    return plate_holder_base().union(plate_holder_rim())
+    return plate_rim().union(plate_insert())
 
 
 def _waisted_link(L, r1, r2, rw) -> cq.Wire:
@@ -210,4 +216,4 @@ def rod() -> cq.Workplane:
     return body
 
 
-PARTS = {"plate_holder_base": plate_holder_base, "plate_holder_rim": plate_holder_rim, "arm": arm, "rod": rod}
+PARTS = {"plate_rim": plate_rim, "plate_insert": plate_insert, "arm": arm, "rod": rod}

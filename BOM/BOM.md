@@ -36,6 +36,7 @@ About **$229** in parts at the listed prices, plus the three motors and two moto
 | 20 AWG red/black zip cable | ~3 m | 1 spool | $7.99 | [EvZ B00WKHXHYW](https://www.amazon.com/dp/B00WKHXHYW) |
 | Dupont jumper leads, 20 cm (M-F / F-F) | ~30 | 1 pack of 120 | $6.98 | [ELEGOO B01EV70C78](https://www.amazon.com/dp/B01EV70C78) |
 | Small zip ties, 2.5 mm | ~20 | 1 pack | — | any |
+| Super glue (CA) | a few drops | 1 tube | — | any (insert into rim) |
 | Double-sided foam mounting tape | a few cm | 1 roll | — | any (holds the Pololu board on its plate) |
 
 ## Fasteners
@@ -74,8 +75,8 @@ About **650 g** of PLA and about **30 hours** on a Bambu Lab P1S (every part fit
 | strap_gearbox | 3 | white | [`strap_gearbox.stl`](../stl/strap_gearbox.stl) | Clamps the gearbox. Same preloaded arch. |
 | arm | 3 | PETG | [`arm.stl`](../stl/arm.stl) | Holds the flange coupling; M3 insert in the elbow. |
 | rod | 3 | PETG | [`rod.stl`](../stl/rod.stl) | Elbow eye with a pressed bronze bushing; M3 insert on top for the stud. |
-| plate_holder_base | 1 | white | [`plate_holder_base.stl`](../stl/plate_holder_base.stl) | Floor the touch panel sits on, with the three ball-joint tabs. Print upside down. |
-| plate_holder_rim | 1 | white | [`plate_holder_rim.stl`](../stl/plate_holder_rim.stl) | Lip around the panel. Print flat and glue onto the base. |
+| plate_insert | 1 | white | [`plate_insert.stl`](../stl/plate_insert.stl) | Solid plate the glass sits on, with three nubs underneath for the ball joints and two clips to tuck the panel's tail. Print flat, nubs up. |
+| plate_rim | 1 | white | [`plate_rim.stl`](../stl/plate_rim.stl) | Outer wall and 0.25" lip; the insert slots in onto its step with a little super glue. Print flat. |
 | frame | 1 | white | [`frame.stl`](../stl/frame.stl) | Rim, console with the two buttons, power-jack tab and a dish for the spare ball. |
 | lattice_shell | 1 | black | [`lattice_shell.stl`](../stl/lattice_shell.stl) | Voronoi shell over the mechanism. Print top-down. |
 | liner | 1 | white | [`liner.stl`](../stl/liner.stl) | Optional solid inner shell: hides the mechanism and damps sound. |

@@ -35,7 +35,7 @@ def build_xml() -> str:
     nylon = 'rgba="0.15 0.15 0.15 1"'  # tie-rod-end socket
     alu = 'rgba="0.78 0.79 0.8 1"'
     assets = "".join(f'<mesh name="{n}" file="{n}.stl" scale="0.001 0.001 0.001"/>'
-                     for n in ("arm", "rod", "plate_holder_base", "plate_holder_rim", "lattice_shell", "frame", "liner", "ga37", "hub",
+                     for n in ("arm", "rod", "plate_rim", "plate_insert", "lattice_shell", "frame", "liner", "ga37", "hub",
                                "shoulder_bolt", "bushing", "ball_stud", "ball_socket", "stud_m3",
                                "base_plate", "strap_gearbox", "strap_motor", "mega_mount", "driver_mount", "switch_mount", "button", "button_ring") if have(n))
     # Stack along each shaft, from the rod's plane (y = 0 in the arm frame), in mm.
@@ -105,7 +105,7 @@ def build_xml() -> str:
   <default>
     <default class="fixed"><geom contype="0" conaffinity="0" rgba="0.62 0.66 0.63 1" density="0"/></default>
     <default class="moving"><geom contype="0" conaffinity="0" rgba="0.25 0.42 0.85 1"/></default>
-    <default class="plate"><geom contype="2" conaffinity="0" rgba="{'0 0 0 0' if have('plate_holder_base') else '0.78 0.84 0.95 1'}" density="0" friction="0.6 0.005 0.0001"/></default>
+    <default class="plate"><geom contype="2" conaffinity="0" rgba="{'0 0 0 0' if have('plate_rim') else '0.78 0.84 0.95 1'}" density="0" friction="0.6 0.005 0.0001"/></default>
   </default>
   <asset>
     <texture name="grid" type="2d" builtin="checker" rgb1="0.9 0.9 0.88" rgb2="0.82 0.83 0.8" width="300" height="300"/>
@@ -131,7 +131,7 @@ def build_xml() -> str:
             pos="0 0 {p.joint_drop + p.thickness / 2:.6g}"/>
       <geom type="box" size="{_f(PANEL[0] / 2, PANEL[1] / 2, 0.0005)}" pos="0 0 {plate_top - 0.0004:.6g}"
             contype="0" conaffinity="0" rgba="0.2 0.24 0.26 1" density="0"/>
-      {"".join(f'<geom type="mesh" mesh="{n}" pos="0 0 {HOLDER_Z}" contype="0" conaffinity="0" density="0" rgba="0.93 0.93 0.91 1"/>' for n in ("plate_holder_base", "plate_holder_rim") if have(n))}
+      {"".join(f'<geom type="mesh" mesh="{n}" pos="0 0 {HOLDER_Z}" contype="0" conaffinity="0" density="0" rgba="0.93 0.93 0.91 1"/>' for n in ("plate_rim", "plate_insert") if have(n))}
       {''.join(lips)}
       {''.join(studs)}
       <site name="plate_origin" pos="0 0 {plate_top:.6g}" size="0.003"/>
