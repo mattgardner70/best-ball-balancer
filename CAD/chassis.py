@@ -240,7 +240,7 @@ def _mega_tabs():
 
 
 def mega_mount() -> cq.Workplane:
-    """Upright 4 mm wall for the Mega (standing on edge, parts facing the centre), six insert standoffs,
+    """Upright 4 mm wall for the Mega (standing on edge, parts facing the centre), four insert standoffs,
     a ledge to rest the board on while starting the screws, and two screw tabs. World position;
     print lying on its back (standoffs up)."""
     x0, y0 = MEGA_AT
@@ -252,6 +252,8 @@ def mega_mount() -> cq.Workplane:
             .edges("|X and >Z").fillet(2))          # 4 mm thick: no gussets behind it
     standoff = 6.0
     for hx, hy in _mega_holes():
+        if hy > H - 6.0:      # the two holes at the top edge: their inserts would break out of the wall's top
+            continue          # (the liner caps the height), so the board takes 4 screws plus the ledge
         y, z = y0 - L / 2 + hx, z_board + hy
         st = (cq.Workplane("YZ", origin=(wall_x, 0, 0)).center(y, z).circle(3.0).extrude(-standoff)
               .cut(cq.Workplane("YZ", origin=(wall_x - standoff, 0, 0)).center(y, z).circle(INSERT_M3[0] / 2)

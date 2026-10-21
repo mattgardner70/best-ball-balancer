@@ -212,7 +212,7 @@ def main(only=None):
 
     steps = {
         "1_base_motors": (["base"], [
-            ([], up(0), 0.0, 1.2, "Base plate: 36 heat-set inserts pressed in"),
+            ([], up(0), 0.0, 1.2, "Base plate: heat-set inserts pressed in"),
             (["motors"], up(0.12), 1.2, 1.4, "Motors 1, 2, 3 into their numbered saddles"),
             (["straps"], up(0.10), 3.0, 1.3, "Straps on, M3 x 12: tighten until the ears touch"),
         ], ((0, 0, 0.03), 0.4, -38, 120)),
