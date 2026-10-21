@@ -258,7 +258,11 @@ def mega_mount() -> cq.Workplane:
                    .extrude(INSERT_M3[1])))
         wall = wall.union(st)
     wall = wall.intersect(cq.Workplane("XY").rect(1000, 1000).extrude(top))
-    ledge = cq.Workplane("XY").workplane(offset=PLATE_T).center(wall_x - standoff - 1.5, y0).rect(3, L - 10).extrude(MEGA_LIFT)
+    # The ledge the board's bottom edge rests on: a solid block back to the wall (it used to float in
+    # front of it, held only by the base plate). All below the board, so its plugs stay clear.
+    ledge_x0 = wall_x - standoff - 3.0
+    ledge = (cq.Workplane("XY").workplane(offset=PLATE_T).center((ledge_x0 + wall_x) / 2 + 0.25, y0)
+             .rect(wall_x - ledge_x0 + 0.5, L - 10).extrude(MEGA_LIFT))
     wall = wall.union(ledge)
     for x, y in _mega_tabs()[:2]:                    # tabs off the wall's ends
         wall = _attach(wall, (x, y0 + (1 if y > y0 else -1) * (L / 2 + 4)), (x, y))
