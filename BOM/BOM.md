@@ -70,9 +70,9 @@ About **650 g** of PLA and about **30 hours** on a Bambu Lab P1S (every part fit
 | Part | Qty | Colour | File | Notes |
 |---|---|---|---|---|
 | base_plate | 1 | white | [`base_plate.stl`](../stl/base_plate.stl) | The chassis: motor saddles, insert pads for the board holders, buck tray, tie loops, and a raised number under each motor. |
-| mega_mount | 1 | white | [`mega_mount.stl`](../stl/mega_mount.stl) | Upright wall for the Arduino Mega, six tabs. Print lying on its back, standoffs up. |
+| mega_mount | 1 | white | [`mega_mount.stl`](../stl/mega_mount.stl) | Upright wall for the Arduino Mega, six tabs. Print flat on its back, standoffs up. |
 | driver_mount | 1 | white | [`driver_mount.stl`](../stl/driver_mount.stl) | Wall carrying both MDD3As back to back, four tabs. Print standing up. |
-| switch_mount | 1 | white | [`switch_mount.stl`](../stl/switch_mount.stl) | Small plate for the Pololu switch (foam tape + zip tie), two tabs. Print standing up. |
+| switch_mount | 1 | white | [`switch_mount.stl`](../stl/switch_mount.stl) | Small plate for the Pololu switch (foam tape + zip tie), two tabs. Print flat on its back. |
 | strap_motor | 3 | white | [`strap_motor.stl`](../stl/strap_motor.stl) | Clamps the motor body. Flattened arch that springs about 2.5 mm as the screws tighten. |
 | strap_gearbox | 3 | white | [`strap_gearbox.stl`](../stl/strap_gearbox.stl) | Clamps the gearbox. Same preloaded arch. |
 | arm | 3 | PETG | [`arm.stl`](../stl/arm.stl) | Holds the flange coupling; M3 insert in the elbow. |

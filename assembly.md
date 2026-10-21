@@ -22,9 +22,9 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 | Part | Qty | Orientation |
 |---|---|---|
 | [`base_plate`](stl/base_plate.stl) | 1 | Flat, as modelled |
-| [`mega_mount`](stl/mega_mount.stl) | 1 | Lying on its back, standoffs up |
+| [`mega_mount`](stl/mega_mount.stl) | 1 | Flat on its back, standoffs up |
 | [`driver_mount`](stl/driver_mount.stl) | 1 | Standing up, on its tabs |
-| [`switch_mount`](stl/switch_mount.stl) | 1 | Standing up, on its tabs |
+| [`switch_mount`](stl/switch_mount.stl) | 1 | Flat on its back |
 | [`strap_motor`](stl/strap_motor.stl), [`strap_gearbox`](stl/strap_gearbox.stl) | 3 each | Arch up |
 | [`arm`](stl/arm.stl) | 3 | Flat |
 | [`rod`](stl/rod.stl) | 3 | Standing up |
@@ -71,7 +71,7 @@ Each leg goes together on its motor, in this order:
 
 ![Each board on its holder, each holder onto the base](images/assembly/3_electronics.gif)
 
-Every board has its own printed holder, so you can mount and wire each board on the bench, then screw the holder down with **M3 × 8** screws into the pads on the base plate.
+Every board has its own printed holder. **Screw each holder down first** with **M3 × 8** screws into the pads on the base plate (some of the screws sit under where the board goes), then mount its board.
 
 1. **Arduino Mega:** screw it to its holder with six **M3 × 6** screws, USB end toward the back. It stands 9 mm off the floor so the plugs on its bottom header have room. Use a **right-angle USB-B cable**: there isn't room for a straight plug with the shell on.
 2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M3 × 8** screws each (they self-tap into the printed posts): terminal blocks up, input header down.

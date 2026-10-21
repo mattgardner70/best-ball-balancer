@@ -204,6 +204,27 @@ def _tab(x, y, z0):
     return t.cut(cq.Workplane("XY").workplane(offset=z0 + TAB_T - 1.8).center(x, y).circle(3.1).extrude(2))
 
 
+def _web(a, tab):
+    """A 3 mm web from attach point a to the near edge of the tab at `tab`, stopping short of its screw hole."""
+    a, tab = np.array(a, float), np.array(tab, float)
+    d = tab - a
+    n = np.linalg.norm(d)
+    b = tab - d / n * (TAB_W / 2)
+    length = np.linalg.norm(b - a)
+    if length < 0.5:
+        return None
+    c = (a + b) / 2
+    ang = math.degrees(math.atan2(d[1], d[0]))
+    return (cq.Workplane("XY").workplane(offset=PLATE_T).center(*c).transformed(rotate=(0, 0, ang))
+            .rect(length + 1.0, 3).extrude(PAD_H + TAB_T))
+
+
+def _attach(body, a, tab):
+    web = _web(a, tab)
+    body = body if web is None else body.union(web)
+    return body.union(_tab(tab[0], tab[1], PLATE_T + PAD_H))
+
+
 def _mega_holes():
     """(along y from the board's -y end, up from its bottom edge) for each hole, flipped if MEGA_FLIP."""
     L, H = MEGA
@@ -213,7 +234,7 @@ def _mega_holes():
 def _mega_tabs():
     """Two tabs off the wall's ends, four low in front of it (under the board, below its plugs)."""
     x0, y0 = MEGA_AT
-    ends = [(x0 + 11.5, y0 + s * (MEGA[0] / 2 + 4 + TAB_W / 2 + 1)) for s in (-1, 1)]
+    ends = [(x0 + 10.0 + 4.0 - TAB_W / 2, y0 + s * (MEGA[0] / 2 + 4 + TAB_W / 2 + 1)) for s in (-1, 1)]   # flush with the back face: prints flat on its back
     front = [(x0 - 3.0, y0 + dy) for dy in (-40.0, -18.0, 18.0, 40.0)]
     return ends + front
 
@@ -239,19 +260,16 @@ def mega_mount() -> cq.Workplane:
     wall = wall.intersect(cq.Workplane("XY").rect(1000, 1000).extrude(top))
     ledge = cq.Workplane("XY").workplane(offset=PLATE_T).center(wall_x - standoff - 1.5, y0).rect(3, L - 10).extrude(MEGA_LIFT)
     wall = wall.union(ledge)
-    for x, y in _mega_tabs()[:2]:                    # tabs at the wall's ends, joined to it
-        wall = wall.union(cq.Workplane("XY").workplane(offset=PLATE_T).center(x, (y + y0 + (1 if y > y0 else -1) * (L / 2 + 4)) / 2)
-                          .rect(3, abs(y - y0) - L / 2 - 4 + TAB_W / 2).extrude(PAD_H + TAB_T))
-        wall = wall.union(_tab(x, y, PLATE_T + PAD_H))
-    for x, y in _mega_tabs()[2:]:                    # low front tabs, joined to the ledge (all below the board, z < 13)
-        wall = wall.union(cq.Workplane("XY").workplane(offset=PLATE_T).center((x + wall_x - standoff - 1.5) / 2, y)
-                          .rect(wall_x - standoff - 1.5 - x, 3).extrude(PAD_H + TAB_T))
-        wall = wall.union(_tab(x, y, PLATE_T + PAD_H))
+    for x, y in _mega_tabs()[:2]:                    # tabs off the wall's ends
+        wall = _attach(wall, (x, y0 + (1 if y > y0 else -1) * (L / 2 + 4)), (x, y))
+    for x, y in _mega_tabs()[2:]:                    # low front tabs off the ledge (all below the board, z < 13)
+        wall = _attach(wall, (wall_x - standoff - 3.0, y), (x, y))
     return wall
 
 
 def _driver_tabs():
-    return [(DRIVER_WALL_X + sx * 7.0, y) for sx in (-1, 1) for y in (DRIVER_Y + 21.5, DRIVER_Y - 17.5)]
+    # Between the boards' standoffs (+-18.3 mm along the wall), so a screwdriver reaches straight down.
+    return [(DRIVER_WALL_X + sx * 7.0, DRIVER_Y + sy * 9.0) for sx in (-1, 1) for sy in (-1, 1)]
 
 
 def driver_mount() -> cq.Workplane:
@@ -272,16 +290,14 @@ def driver_mount() -> cq.Workplane:
                 post = (cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(3.0).extrude(side * DRIVER_STANDOFF)
                         .cut(cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(1.25).extrude(side * (DRIVER_STANDOFF + 0.1))))
                 wall = wall.union(post)
-    for x, y in _driver_tabs():                     # tabs on both sides, joined to the wall by a web
-        wall = wall.union(cq.Workplane("XY").workplane(offset=PLATE_T).center((x + DRIVER_WALL_X) / 2, y)
-                          .rect(abs(x - DRIVER_WALL_X) + TAB_W / 2, 3).extrude(PAD_H + TAB_T))
-        wall = wall.union(_tab(x, y, PLATE_T + PAD_H))
+    for x, y in _driver_tabs():                     # tabs on both sides, between the board standoffs
+        wall = _attach(wall, (DRIVER_WALL_X + (1.5 if x > DRIVER_WALL_X else -1.5), y), (x, y))
     return wall
 
 
 def _switch_tabs():
     x0, y0 = POWER_SWITCH_AT
-    return [(x0 - 1.5, y0 + s * 20.5) for s in (-1, 1)]
+    return [(x0 - 4.0 + TAB_W / 2, y0 + s * 20.5) for s in (-1, 1)]   # flush with the back face: prints flat on its back
 
 
 def switch_mount() -> cq.Workplane:
@@ -296,9 +312,7 @@ def switch_mount() -> cq.Workplane:
         plate = plate.cut(cq.Workplane("XY").workplane(offset=PLATE_T + h / 2 - 2).center(x0 - 1.5, y0 + sy * 14.0)
                           .rect(4, 2.6).extrude(4))
     for x, y in _switch_tabs():
-        plate = plate.union(cq.Workplane("XY").workplane(offset=PLATE_T).center(x, (y + y0 + (1 if y > y0 else -1) * w / 2) / 2)
-                            .rect(3, abs(y - y0) - w / 2 + TAB_W / 2).extrude(PAD_H + TAB_T))
-        plate = plate.union(_tab(x, y, PLATE_T + PAD_H))
+        plate = _attach(plate, (x, y0 + (1 if y > y0 else -1) * w / 2), (x, y))
     return plate
 
 
