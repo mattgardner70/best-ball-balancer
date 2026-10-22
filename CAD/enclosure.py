@@ -134,7 +134,34 @@ def _bottom_notches(t, grow=0.0):
     return out
 
 
-def lattice_shell() -> cq.Workplane:
+OVERHANG_DEG = 60.0                  # v2: no hole ceiling flatter than this from vertical, printed top-down
+
+
+def _steep_ceiling(cell, k):
+    """Trim a (convex) wall cell so that, printed upside down, its ceiling is a pointed roof whose
+    sides rise at least atan(k) from horizontal. Print-up is world -z, so the roof points at the
+    cell's lowest point. Convexity means every edge left under the roof is steeper still."""
+    minx, miny, maxx, maxy = cell.bounds
+    pts = np.array(cell.exterior.coords)
+    u0 = pts[np.argmin(pts[:, 1]), 0]
+    span = (maxx - minx) + 10
+    roof = Polygon([(u0, miny), (u0 - span, miny + k * span), (u0 - span, maxy + 10),
+                    (u0 + span, maxy + 10), (u0 + span, miny + k * span)])
+    return cell.intersection(roof)
+
+
+def lattice_shell_v1() -> cq.Workplane:
+    """The shell as first designed: free-form Voronoi walls (needs supports printed top-down)."""
+    return lattice_shell(steep=False)
+
+
+def lattice_shell_v2() -> cq.Workplane:
+    """Printable without supports, top face on the bed: every wall opening has a pointed ceiling
+    no flatter than OVERHANG_DEG from vertical."""
+    return lattice_shell(steep=True)
+
+
+def lattice_shell(steep=False) -> cq.Workplane:
     w, d, h, t = SHELL_W, SHELL_D, SHELL_H, SHELL_T
     seat = CRADLE_H - SEAT
     body = _rounded_box(w, d, h - seat, SHELL_R).edges(">Z").fillet(4).translate((0, 0, seat))
@@ -148,7 +175,12 @@ def lattice_shell() -> cq.Workplane:
     z0, z1 = CRADLE_H + RIM_BOTTOM, h - RIM_TOP
     total, at = _perimeter(w, d, SHELL_R)
     pts = _poisson(total, z1 - z0, lambda u, v: _spacing(v / (z1 - z0)), SEED, periodic=True)
+    k = math.tan(math.radians(90 - OVERHANG_DEG))
     for c in _voronoi_cells(pts, box(-total, 0, 2 * total, z1 - z0), period=total):
+        if steep:
+            c = _steep_ceiling(c, k)
+            if c.is_empty or c.geom_type != "Polygon" or c.buffer(-1.4).is_empty:
+                continue
         uc = c.centroid.x
         (px, py), (tx, ty), (nx, ny) = at(uc)
         plane = cq.Plane(origin=(px, py, z0), xDir=(tx, ty, 0), normal=(nx, ny, 0))

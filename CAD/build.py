@@ -11,11 +11,11 @@ import mujoco
 import numpy as np
 
 from .chassis import PARTS as CHASSIS
-from .enclosure import frame, lattice_shell, liner
+from .enclosure import frame, lattice_shell_v1, lattice_shell_v2, liner
 from . import hardware
 from .parts import PARTS
 
-PARTS = {**PARTS, "lattice_shell": lattice_shell, "frame": frame, "liner": liner, **CHASSIS}
+PARTS = {**PARTS, "lattice_shell_v1": lattice_shell_v1, "lattice_shell_v2": lattice_shell_v2, "frame": frame, "liner": liner, **CHASSIS}
 
 ROOT = Path(__file__).resolve().parent.parent
 STL = ROOT / "stl"

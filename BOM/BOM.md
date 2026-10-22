@@ -80,7 +80,7 @@ About **650 g** of PLA and about **30 hours** on a Bambu Lab P1S (every part fit
 | plate_insert | 1 | white | [`plate_insert.stl`](../stl/plate_insert.stl) | Solid plate the glass sits on, with three nubs underneath for the ball joints and two clips to tuck the panel's tail. Print flat, nubs up. |
 | plate_rim | 1 | white | [`plate_rim.stl`](../stl/plate_rim.stl) | Outer wall and 0.25" lip; the insert slots in onto its step with a little super glue. Print flat. |
 | frame | 1 | white | [`frame.stl`](../stl/frame.stl) | Rim, console with the two buttons, power-jack tab and a dish for the spare ball. |
-| lattice_shell | 1 | black | [`lattice_shell.stl`](../stl/lattice_shell.stl) | Voronoi shell over the mechanism. Print top-down. |
+| lattice_shell_v2 | 1 | black | [`lattice_shell_v2.stl`](../stl/lattice_shell_v2.stl) | Voronoi shell over the mechanism. Prints top face down **without supports**: every wall opening has a pointed ceiling, never flatter than 60° from vertical. ([v1](../stl/lattice_shell_v1.stl) is the original free-form version, which needs supports.) |
 | liner | 1 | white | [`liner.stl`](../stl/liner.stl) | Optional solid inner shell: hides the mechanism and damps sound. |
 
 ## Tools

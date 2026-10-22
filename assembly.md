@@ -31,7 +31,7 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 | [`plate_insert`](stl/plate_insert.stl) | 1 | Flat, nubs up |
 | [`plate_rim`](stl/plate_rim.stl) | 1 | Flat |
 | [`frame`](stl/frame.stl) | 1 | Open side down, supports under the console top |
-| [`lattice_shell`](stl/lattice_shell.stl) | 1 | Top face down |
+| [`lattice_shell_v2`](stl/lattice_shell_v2.stl) | 1 | Top face down, no supports needed ([v1](stl/lattice_shell_v1.stl) is the original, which needs supports) |
 | [`liner`](stl/liner.stl) (optional) | 1 | Top face down |
 
 ## 2. Set the heat-set inserts

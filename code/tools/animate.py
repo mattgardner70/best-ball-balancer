@@ -65,7 +65,7 @@ class Scene:
                 g[i] = "frame"
             elif mesh in ("button", "button_ring"):
                 g[i] = "buttons"
-            elif mesh == "lattice_shell":
+            elif mesh and mesh.startswith("lattice_shell"):
                 g[i] = "shell"
             elif mesh == "liner":
                 g[i] = "liner"

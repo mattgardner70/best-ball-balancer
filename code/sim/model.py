@@ -35,7 +35,7 @@ def build_xml() -> str:
     nylon = 'rgba="0.15 0.15 0.15 1"'  # tie-rod-end socket
     alu = 'rgba="0.78 0.79 0.8 1"'
     assets = "".join(f'<mesh name="{n}" file="{n}.stl" scale="0.001 0.001 0.001"/>'
-                     for n in ("arm", "rod", "plate_rim", "plate_insert", "lattice_shell", "frame", "liner", "ga37", "hub",
+                     for n in ("arm", "rod", "plate_rim", "plate_insert", "lattice_shell_v2", "frame", "liner", "ga37", "hub",
                                "shoulder_bolt", "bushing", "ball_stud", "ball_socket", "stud_m3",
                                "base_plate", "strap_gearbox", "strap_motor", "mega_mount", "driver_mount", "switch_mount", "button", "button_ring") if have(n))
     # Stack along each shaft, from the rod's plane (y = 0 in the arm frame), in mm.
@@ -117,7 +117,7 @@ def build_xml() -> str:
     <light pos="0.3 -0.4 0.8" dir="-0.3 0.4 -0.8" diffuse="0.8 0.8 0.8"/>
     <light pos="-0.3 0.3 0.6" dir="0.3 -0.3 -0.6" diffuse="0.3 0.3 0.3"/>
     <geom name="desk" type="plane" size="0.5 0.5 0.01" material="grid" contype="1" conaffinity="1"/>
-    {'<geom type="mesh" mesh="lattice_shell" class="fixed" group="4" rgba="0.08 0.08 0.09 1"/>' if have("lattice_shell") else ''}
+    {'<geom type="mesh" mesh="lattice_shell_v2" class="fixed" group="4" rgba="0.08 0.08 0.09 1"/>' if have("lattice_shell_v2") else ''}
     {'<geom type="mesh" mesh="liner" class="fixed" group="3" rgba="0.95 0.95 0.93 1"/>' if have("liner") else ''}
     {'<geom type="mesh" mesh="frame" class="fixed" group="2" rgba="0.95 0.95 0.93 1"/>' if have("frame") else ''}
     {''.join(motors_vis)}
