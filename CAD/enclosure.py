@@ -109,7 +109,7 @@ def _prism(cell, plane, depth, n=36):
     return cq.Workplane(plane).workplane(offset=0.6).polyline(_ring(cell, n)).close().extrude(-(depth + 0.6)).val()
 
 
-ROD_SLOT = (32.0, 22.0)              # rod pass-through in the shell top: radial length, width (was 22 x 14;
+ROD_SLOT = (48.0, 33.0)              # rod pass-through in the shell top: radial length, width (was 32 x 22, before that 22 x 14;
                                      # the real rods lean more than the model's, so give them room)
 
 
@@ -142,7 +142,6 @@ def lattice_shell() -> cq.Workplane:
     for x, y, a in _rod_slots():
         body = body.cut(cq.Workplane("XY").workplane(offset=h - t - 1).center(x, y)
                         .transformed(rotate=(0, 0, a)).slot2D(*ROD_SLOT, 0).extrude(t + 2))
-    body = body.cut(_cable_slot(h - t - 1, t + 2))
 
     solids = []
     # Walls: one periodic strip around the whole perimeter, starting just above the cradle rim.
@@ -167,8 +166,6 @@ def lattice_shell() -> cq.Workplane:
     region = edge
     for x, y, _ in _rod_slots():
         region = region.difference(Point(x, y).buffer(ROD_SLOT[0] / 2 + 5))
-    region = region.difference(box(CABLE_PASS[0] - CABLE_SLOT[1] / 2, CABLE_PASS[1] - CABLE_SLOT[0] / 2,
-                                   CABLE_PASS[0] + CABLE_SLOT[1] / 2, CABLE_PASS[1] + CABLE_SLOT[0] / 2).buffer(6))
     top = cq.Plane(origin=(0, 0, h), xDir=(1, 0, 0), normal=(0, 0, 1))
     for c in _voronoi_cells(pts, region):
         solids.append(_prism(c, top, t + 1.5))
