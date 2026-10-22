@@ -150,6 +150,20 @@ def _steep_ceiling(cell, k):
     return cell.intersection(roof)
 
 
+def _notch_keepouts(w, d, total, z0):
+    """The wall notches in the walls' unrolled (u along the perimeter, v up from z0) coordinates,
+    grown by a strut so a solid border runs round each one."""
+    r = SHELL_R
+    sx, sy = w - 2 * r, d - 2 * r
+    arc = math.pi * r / 2
+    back0 = sx + arc + sy + arc                       # where the back wall starts along the perimeter
+    m = STRUT + 1.0
+    out = []
+    for (x, nw, top), u in ((CORD_NOTCH, back0 + (sx / 2 - CORD_NOTCH[0])), (WIRE_NOTCH, WIRE_NOTCH[0] + sx / 2)):
+        out.append(box(u - nw / 2 - m, -5, u + nw / 2 + m, top - z0 + m))
+    return out
+
+
 def lattice_shell_v1() -> cq.Workplane:
     """The shell as first designed: free-form Voronoi walls (needs supports printed top-down)."""
     return lattice_shell(steep=False)
@@ -176,8 +190,15 @@ def lattice_shell(steep=False) -> cq.Workplane:
     total, at = _perimeter(w, d, SHELL_R)
     pts = _poisson(total, z1 - z0, lambda u, v: _spacing(v / (z1 - z0)), SEED, periodic=True)
     k = math.tan(math.radians(90 - OVERHANG_DEG))
+    notches = _notch_keepouts(w, d, total, z0) if steep else []
     for c in _voronoi_cells(pts, box(-total, 0, 2 * total, z1 - z0), period=total):
         if steep:
+            # Openings stop short of the notches: one cut by a notch edge left a sliver hanging in mid-air.
+            for n in notches:
+                if c.intersects(n):
+                    c = c.difference(n)
+            if c.is_empty or c.geom_type != "Polygon" or c.convex_hull.area - c.area > 0.5:
+                continue                  # wrapped round a notch corner: leave it solid
             c = _steep_ceiling(c, k)
             if c.is_empty or c.geom_type != "Polygon" or c.buffer(-1.4).is_empty:
                 continue
