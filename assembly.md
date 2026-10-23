@@ -59,8 +59,8 @@ The MDD3A standoffs on the driver holder don't take inserts: their M3 screws tap
 
 Each leg goes together on its motor, in this order:
 
-1. **Hub onto the shaft.** Slide the flange coupling onto the motor's D-shaft and tighten its set screw onto the flat.
-2. **Arm onto the hub.** Fit the arm over the coupling's flange and bolt it on with four **M3 × 12** screws.
+1. **Hub onto the shaft.** Slide the flange coupling onto the motor's D-shaft and tighten **both** set screws, one onto the flat. Do it now: once the arm is on, each set screw sits behind one of the flange bolts (take that bolt out to reach it later).
+2. **Arm onto the hub.** Fit the arm over the coupling's flange, with the two set screws facing the arm's side access holes, and bolt it on with four **M3 × 12** screws.
 3. **Bushing into the rod.** Heat-press the flanged bronze bushing into the rod's elbow eye, from the side the bolt head will be on.
 4. **Rod onto the arm.** Pass a **shoulder bolt** through the bushing and thread it into the arm's elbow insert. The rod should swing freely with no play.
 5. **Rod end.** Thread an **M3 × 16 grub screw** into the rod's top insert and lock it with an **M3 nut**, then screw the **tie-rod end** socket onto it.

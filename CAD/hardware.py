@@ -94,8 +94,8 @@ def hub() -> cq.Workplane:
     flange = cq.Workplane("XY").circle(od / 2).circle(3.0).extrude(HUB_FLANGE_T)
     collar = cq.Workplane("XY").workplane(offset=HUB_FLANGE_T).circle(HUB_COLLAR[0] / 2).circle(3.0).extrude(HUB_COLLAR[1])
     body = flange.union(collar)
-    body = body.cut(cq.Workplane("XY").polarArray(bc / 2, 45, 360, 4).circle(HUB_HOLE / 2).extrude(HUB_FLANGE_T))
-    # Two set screws, 180 deg apart, along y (installed pointing up and down, at the arm's access holes).
+    body = body.cut(cq.Workplane("XY").polarArray(bc / 2, 0, 360, 4).circle(HUB_HOLE / 2).extrude(HUB_FLANGE_T))
+    # Two set screws, 180 deg apart, along y: in line with the flange holes on +-y (as on the real part).
     return body.cut(cq.Workplane("XZ").center(0, HUB_FLANGE_T + HUB_COLLAR[1] / 2).circle(1.25)
                     .extrude(HUB_COLLAR[0], both=True))
 

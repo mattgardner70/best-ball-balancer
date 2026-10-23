@@ -172,10 +172,13 @@ def arm() -> cq.Workplane:
     cd = hw.HUB_COLLAR[0]
     body = body.cut(cq.Workplane("XY").workplane(offset=ARM_T - COLLAR_POCKET).circle(cd / 2 + 0.2).extrude(COLLAR_POCKET))
     body = body.cut(cq.Workplane("XY").circle(3.3).extrude(ARM_T))                       # shaft tip clearance
-    holes = cq.Workplane("XY").polarArray(bc / 2, 45, 360, 4)
+    holes = cq.Workplane("XY").polarArray(bc / 2, 0, 360, 4)       # bolts on +-x and +-y: the set screws sit in line with two of them
     body = body.cut(holes.circle(1.65).extrude(ARM_T))                                   # M3 clearance
     body = body.cut(holes.circle(3.0).extrude(3.0))                                      # screw-head counterbores, rod side
-    # The coupling has two set screws, 180 deg apart. Turn them to point up and down at assembly:
+    # The coupling has two set screws, 180 deg apart, in line with two of its flange holes (measured):
+    # with the bolt pattern square to the arm they point along +-y, at these access holes. Each access
+    # hole passes one flange bolt; tighten the set screws before bolting the arm on (or take that bolt
+    # out to reach one later). Turn them to point up and down at assembly:
     # the top one is reached from above (plate off, shell lifted), the bottom one from below with
     # the short leg of an L-key (about 23 mm clear above the base plate). +y here is up.
     for side in (1, -1):
