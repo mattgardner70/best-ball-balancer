@@ -42,11 +42,12 @@ MOTOR_SADDLE = (MOTOR_FACE - hw.GA37_GEARBOX[1] - 0.3, MOTOR_FACE - hw.GA37_GEAR
 
 # Electronics layout (from a free-space search between the motors and arm swings)
 MEGA_AT = (88.0, 20.0)               # standing on edge, board along y, parts facing -x; toward the back wall
-MEGA_FLIP = True                     # USB end toward +y (back corner); the digital header is the bottom edge
 MEGA_LIFT = 9.0                      # board's bottom edge above the plate: room for the Dupont plugs below it
                                      # (the liner's inside top, ~67.4 mm, caps it: board top 66.3)
 MEGA = (101.6, 53.3)
-MEGA_HOLES = [(14.0, 2.5), (15.3, 50.7), (66.1, 7.6), (66.1, 35.5), (90.2, 50.7), (96.5, 2.5)]  # (I) Arduino drawing
+MEGA_HOLES = [(13.97, 2.54), (15.24, 50.8), (66.04, 7.62), (66.04, 35.56), (90.17, 50.8), (96.52, 2.54)]
+# Arduino Mega 2560 R3 holes, mm, seen from the component side: x from the USB / power-jack edge, y up from
+# the analog / power header edge (verified against SparkFun's ARDUINO_MEGA footprint).
 # Two Cytron MDD3A drivers, back to back on one upright wall in the front-right corner, beside the Mega.
 MDD3A = (48.26, 41.66)               # board: terminals-to-header length, width (datasheet)
 MDD3A_HOLES = (43.18, 36.58)         # hole spacing, same axes; 3 mm holes: top two used, M3 x 6 into heat-set inserts
@@ -197,11 +198,13 @@ def _tie_loop(x, y, ang):
     return arch.cut(post.rect(6, 5).extrude(2.6))
 
 
-def _tab(x, y, z0):
-    """A screw tab sitting on a pad: M3 clearance with the head sunk in."""
+def _tab(x, y, z0, hole=None):
+    """A screw tab sitting on a pad: M3 clearance with the head sunk in. `hole` puts the screw off the
+    tab's centre (to land on an already printed pad while the tab stays flush with a flat back)."""
+    hx, hy = hole if hole else (x, y)
     t = (cq.Workplane("XY").workplane(offset=z0).center(x, y).rect(TAB_W, TAB_W).extrude(TAB_T).edges("|Z").fillet(2))
-    t = t.cut(cq.Workplane("XY").workplane(offset=z0).center(x, y).circle(1.7).extrude(TAB_T))
-    return t.cut(cq.Workplane("XY").workplane(offset=z0 + TAB_T - 1.8).center(x, y).circle(3.1).extrude(2))
+    t = t.cut(cq.Workplane("XY").workplane(offset=z0).center(hx, hy).circle(1.7).extrude(TAB_T))
+    return t.cut(cq.Workplane("XY").workplane(offset=z0 + TAB_T - 1.8).center(hx, hy).circle(3.1).extrude(2))
 
 
 def _web(a, tab):
@@ -219,22 +222,24 @@ def _web(a, tab):
             .rect(length + 1.0, 3).extrude(PAD_H + TAB_T))
 
 
-def _attach(body, a, tab):
+def _attach(body, a, tab, hole=None):
     web = _web(a, tab)
     body = body if web is None else body.union(web)
-    return body.union(_tab(tab[0], tab[1], PLATE_T + PAD_H))
+    return body.union(_tab(tab[0], tab[1], PLATE_T + PAD_H, hole))
 
 
 def _mega_holes():
-    """(along y from the board's -y end, up from its bottom edge) for each hole, flipped if MEGA_FLIP."""
+    """(along y from the board's -y end, up from its bottom edge) for each hole. The board stands with its
+    component side facing the centre (-x): seen from there, +y is to the LEFT, so the drawing's x runs
+    toward -y. USB / power-jack edge at the +y (back) end, analog / power header along the bottom."""
     L, H = MEGA
-    return [(L - hx, H - hy) if MEGA_FLIP else (hx, hy) for hx, hy in MEGA_HOLES]
+    return [(L - hx, hy) for hx, hy in MEGA_HOLES]
 
 
 def _mega_tabs():
     """Two tabs off the wall's ends, four low in front of it (under the board, below its plugs)."""
     x0, y0 = MEGA_AT
-    ends = [(x0 + 10.0 + 4.0 - TAB_W / 2, y0 + s * (MEGA[0] / 2 + 4 + TAB_W / 2 + 1)) for s in (-1, 1)]   # flush with the back face: prints flat on its back
+    ends = [(x0 + 11.5, y0 + s * (MEGA[0] / 2 + 4 + TAB_W / 2 + 1)) for s in (-1, 1)]   # screw = the printed pads
     front = [(x0 - 3.0, y0 + dy) for dy in (-40.0, -18.0, 18.0, 40.0)]
     return ends + front
 
@@ -255,7 +260,7 @@ def mega_mount() -> cq.Workplane:
         if hy > H - 6.0:      # the two holes at the top edge: their inserts would break out of the wall's top
             continue          # (the liner caps the height), so the board takes 4 screws plus the ledge
         y, z = y0 - L / 2 + hx, z_board + hy
-        st = (cq.Workplane("YZ", origin=(wall_x, 0, 0)).center(y, z).circle(3.0).extrude(-standoff)
+        st = (cq.Workplane("YZ", origin=(wall_x, 0, 0)).center(y, z).circle(3.5).extrude(-standoff)
               .cut(cq.Workplane("YZ", origin=(wall_x - standoff, 0, 0)).center(y, z).circle(INSERT_M3[0] / 2)
                    .extrude(INSERT_M3[1])))
         wall = wall.union(st)
@@ -266,8 +271,9 @@ def mega_mount() -> cq.Workplane:
     ledge = (cq.Workplane("XY").workplane(offset=PLATE_T).center((ledge_x0 + wall_x) / 2 + 0.25, y0)
              .rect(wall_x - ledge_x0 + 0.5, L - 10).extrude(MEGA_LIFT))
     wall = wall.union(ledge)
-    for x, y in _mega_tabs()[:2]:                    # tabs off the wall's ends
-        wall = _attach(wall, (x, y0 + (1 if y > y0 else -1) * (L / 2 + 4)), (x, y))
+    for x, y in _mega_tabs()[:2]:                    # tabs off the wall's ends: body flush with the back, screw on the pad
+        xb = wall_x + 4.0 - TAB_W / 2
+        wall = _attach(wall, (xb, y0 + (1 if y > y0 else -1) * (L / 2 + 4)), (xb, y), hole=(x, y))
     for x, y in _mega_tabs()[2:]:                    # low front tabs off the ledge (all below the board, z < 13)
         wall = _attach(wall, (wall_x - standoff - 3.0, y), (x, y))
     return wall
@@ -294,7 +300,7 @@ def driver_mount() -> cq.Workplane:
         for dy in (-hw_ / 2, hw_ / 2):
             dz = hl / 2                            # top posts only: the bottom two crowded the base tabs
             y, z = DRIVER_Y + dy, z0 + L / 2 + dz
-            post = (cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(INSERT_M3[0] / 2 + 2.0)
+            post = (cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(3.5)
                     .extrude(side * DRIVER_STANDOFF))
             hole = (cq.Workplane("YZ", origin=(x_face + side * DRIVER_STANDOFF, 0, 0)).center(y, z)
                     .circle(INSERT_M3[0] / 2).extrude(-side * (DRIVER_STANDOFF + 0.2)))   # M3 heat-set insert
@@ -306,7 +312,7 @@ def driver_mount() -> cq.Workplane:
 
 def _switch_tabs():
     x0, y0 = POWER_SWITCH_AT
-    return [(x0 - 4.0 + TAB_W / 2, y0 + s * 20.5) for s in (-1, 1)]   # flush with the back face: prints flat on its back
+    return [(x0 - 1.5, y0 + s * 20.5) for s in (-1, 1)]   # screw = the printed pads
 
 
 def switch_mount() -> cq.Workplane:
@@ -320,8 +326,9 @@ def switch_mount() -> cq.Workplane:
     for sy in (-1, 1):                               # zip-tie slots beside the board
         plate = plate.cut(cq.Workplane("XY").workplane(offset=PLATE_T + h / 2 - 2).center(x0 - 1.5, y0 + sy * 14.0)
                           .rect(4, 2.6).extrude(4))
-    for x, y in _switch_tabs():
-        plate = _attach(plate, (x, y0 + (1 if y > y0 else -1) * w / 2), (x, y))
+    for x, y in _switch_tabs():                      # body flush with the back, screw on the pad
+        xb = x0 - 4.0 + TAB_W / 2
+        plate = _attach(plate, (xb, y0 + (1 if y > y0 else -1) * w / 2), (xb, y), hole=(x, y))
     return plate
 
 

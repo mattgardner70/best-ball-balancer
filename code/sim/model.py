@@ -186,10 +186,8 @@ def _chassis_geoms(have) -> str:
     bx = mx + 10.0 - 6.0 - 0.8
     zb = ch.PLATE_T + ch.MEGA_LIFT
     out.append(box((bx, my, zb + H / 2), (0.8, L / 2, H / 2), "0.05 0.45 0.55 1"))                    # Mega, on edge
-    hz = zb + 4 if ch.MEGA_FLIP else zb + H - 4                                                        # digital header row
-    out.append(box((bx - 5, my - 10 if ch.MEGA_FLIP else my + 10, hz), (4, 35, 2.5), "0.1 0.1 0.1 1"))
-    usb_y = my + L / 2 + 3 if ch.MEGA_FLIP else my - L / 2 - 3
-    out.append(box((bx - 6, usb_y, zb + (H - 38.4 if ch.MEGA_FLIP else 38.4)), (5.5, 8, 6), "0.7 0.7 0.72 1"))   # USB-B
+    out.append(box((bx - 5, my - 10, zb + H - 4), (4, 35, 2.5), "0.1 0.1 0.1 1"))                    # digital header, top edge
+    out.append(box((bx - 6, my + L / 2 + 3, zb + 38.4), (5.5, 8, 6), "0.7 0.7 0.72 1"))               # USB-B, back end
     # MDD3A drivers, back to back on the driver wall (terminals along the top edge).
     dl, dw = ch.MDD3A
     for side in (1, -1):

@@ -74,10 +74,8 @@ def mega_pin(pin):
     else:                                                # GND
         hx, hy = 40.6, 2.5
     L, Hb = ch.MEGA
-    if ch.MEGA_FLIP:
-        hx, hy = L - hx, Hb - hy
-    x0, y0 = ch.MEGA_AT
-    return np.array([x0 + 10 - 6 - 1.6 - 8.0, y0 - L / 2 + hx, ch.PLATE_T + ch.MEGA_LIFT + hy])
+    x0, y0 = ch.MEGA_AT                                  # component side faces -x: the board's x runs toward -y
+    return np.array([x0 + 10 - 6 - 1.6 - 8.0, y0 + L / 2 - hx, ch.PLATE_T + ch.MEGA_LIFT + hy])
 
 
 def driver_pin(dev, pin):
