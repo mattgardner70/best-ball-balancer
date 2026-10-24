@@ -49,7 +49,7 @@ MEGA = (101.6, 53.3)
 MEGA_HOLES = [(14.0, 2.5), (15.3, 50.7), (66.1, 7.6), (66.1, 35.5), (90.2, 50.7), (96.5, 2.5)]  # (I) Arduino drawing
 # Two Cytron MDD3A drivers, back to back on one upright wall in the front-right corner, beside the Mega.
 MDD3A = (48.26, 41.66)               # board: terminals-to-header length, width (datasheet)
-MDD3A_HOLES = (43.18, 36.58)         # hole spacing, same axes; 3 mm holes -> M3 x 8, self-tapping into 2.5 mm pilots
+MDD3A_HOLES = (43.18, 36.58)         # hole spacing, same axes; 3 mm holes: top two used, M3 x 6 into heat-set inserts
 DRIVER_WALL_X = 76.5                 # wall centre line (runs along y)
 DRIVER_Y = -72.5                     # boards' centre along y
 DRIVER_STANDOFF = 6.0
@@ -274,13 +274,14 @@ def mega_mount() -> cq.Workplane:
 
 
 def _driver_tabs():
-    # Between the boards' standoffs (+-18.3 mm along the wall), so a screwdriver reaches straight down.
-    return [(DRIVER_WALL_X + sx * 7.0, DRIVER_Y + sy * 9.0) for sx in (-1, 1) for sy in (-1, 1)]
+    # At the wall's ends, where the printed base's pads are (the bottom board posts are gone, so a
+    # screwdriver reaches them straight down).
+    return [(DRIVER_WALL_X + sx * 7.0, y) for sx in (-1, 1) for y in (DRIVER_Y + 21.5, DRIVER_Y - 17.5)]
 
 
 def driver_mount() -> cq.Workplane:
-    """Upright wall carrying both MDD3As back to back, one on each face, on standoffs (M3 screws tap
-    into the posts). Terminal blocks along the top edge, input header along the bottom, MEGA_LIFT above
+    """Upright wall carrying both MDD3As back to back, one on each face, each on its two top holes
+    (M3 heat-set inserts in the posts, M3 x 6 screws). Terminal blocks along the top edge, input header along the bottom, MEGA_LIFT above
     the plate like the Mega. Four screw tabs. World position; print standing up."""
     L, W = MDD3A
     hl, hw_ = MDD3A_HOLES
@@ -291,11 +292,13 @@ def driver_mount() -> cq.Workplane:
     for side in (1, -1):
         x_face = DRIVER_WALL_X + side * 1.5
         for dy in (-hw_ / 2, hw_ / 2):
-            for dz in (-hl / 2, hl / 2):
-                y, z = DRIVER_Y + dy, z0 + L / 2 + dz
-                post = (cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(3.0).extrude(side * DRIVER_STANDOFF)
-                        .cut(cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(1.25).extrude(side * (DRIVER_STANDOFF + 0.1))))
-                wall = wall.union(post)
+            dz = hl / 2                            # top posts only: the bottom two crowded the base tabs
+            y, z = DRIVER_Y + dy, z0 + L / 2 + dz
+            post = (cq.Workplane("YZ", origin=(x_face, 0, 0)).center(y, z).circle(INSERT_M3[0] / 2 + 2.0)
+                    .extrude(side * DRIVER_STANDOFF))
+            hole = (cq.Workplane("YZ", origin=(x_face + side * DRIVER_STANDOFF, 0, 0)).center(y, z)
+                    .circle(INSERT_M3[0] / 2).extrude(-side * (DRIVER_STANDOFF + 0.2)))   # M3 heat-set insert
+            wall = wall.union(post).cut(hole)
     for x, y in _driver_tabs():                     # tabs on both sides, between the board standoffs
         wall = _attach(wall, (DRIVER_WALL_X + (1.5 if x > DRIVER_WALL_X else -1.5), y), (x, y))
     return wall

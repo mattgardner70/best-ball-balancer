@@ -43,7 +43,7 @@ About **$297** in parts at the listed prices, motors and motor drivers included.
 
 | Part | Qty used | Buy | Price ea | Total | Where |
 |---|---|---|---|---|---|
-| M3 × 5.7 heat-set inserts | 34 | 1 pack of 100 | $9.99 | $9.99 | [ruthex B08BCRZZS3](https://www.amazon.com/dp/B08BCRZZS3) |
+| M3 × 5.7 heat-set inserts | 38 | 1 pack of 100 | $9.99 | $9.99 | [ruthex B08BCRZZS3](https://www.amazon.com/dp/B08BCRZZS3) |
 | M3 socket-head screw kit with nuts | see below | 1 kit | $9.99 | $9.99 | [Fgruh B0FG2BRXL3](https://www.amazon.com/dp/B0FG2BRXL3) |
 | M3 × 16 grub screws (rod studs) | 3 | 1 pack of 50 | $7.89 | $7.89 | [uxcell B01AXVSM6O](https://www.amazon.com/dp/B01AXVSM6O) |
 
@@ -57,11 +57,11 @@ About **$297** in parts at the listed prices, motors and motor drivers included.
 | Shoulder bolt | 3 | Through the rod's bushing into the arm's elbow insert | Build the legs |
 | M3 × 16 grub screw + M3 nut | 3 + 3 | Into each rod's top insert, nut locked against the rod | Build the legs |
 | M3 × 6 | 4 | Arduino Mega onto its holder's standoffs (its two top-edge holes aren't used) | Mount the electronics |
-| M3 × 8 | 8 | MDD3As onto the driver holder (4 each), self-tapping into the printed posts | Mount the electronics |
+| M3 × 6 | 4 | MDD3As onto the driver holder (2 each, top holes, into heat-set inserts) | Mount the electronics |
 | M3 × 8 | 12 | Holders onto the base plate pads: Mega 6, drivers 4, switch 2 | Mount the electronics |
 | Tie-rod end ball screw + nut | 3 | Through each plate nub into the ball joint (comes with the tie-rod ends) | Close it up |
 
-**Heat-set inserts (34):** motor saddles 12, holder pads on the base plate 12, Mega holder standoffs 4, rod tops 3, arm elbows 3.
+**Heat-set inserts (38):** motor saddles 12, holder pads on the base plate 12, Mega holder standoffs 4, driver holder posts 4, rod tops 3, arm elbows 3.
 
 ## Printed parts
 

@@ -36,14 +36,14 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 
 ## 2. Set the heat-set inserts
 
-Press **34 M3 inserts** with a soldering iron and insert tip, flush with the surface:
+Press **38 M3 inserts** with a soldering iron and insert tip, flush with the surface:
 
 - **Base plate:** 12 in the motor saddles (two beside each strap) and 12 in the raised pads the board holders screw onto.
 - **Mega holder:** 4 in its standoffs.
+- **Driver holder:** 4 in its posts (2 on each face).
 - **Arms:** 1 in each elbow tip.
 - **Rods:** 1 in each top face.
 
-The MDD3A standoffs on the driver holder don't take inserts: their M3 screws tap straight into the plastic.
 
 ## 3. Mount the motors
 
@@ -74,7 +74,7 @@ Each leg goes together on its motor, in this order:
 Every board has its own printed holder. **Screw each holder down first** with **M3 × 8** screws into the pads on the base plate (some of the screws sit under where the board goes), then mount its board.
 
 1. **Arduino Mega:** screw it to its holder with four **M3 × 6** screws, USB end toward the back. It stands 9 mm off the floor so the plugs on its bottom header have room. Use a **right-angle USB-B cable**: there isn't room for a straight plug with the shell on.
-2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with four **M3 × 8** screws each (they self-tap into the printed posts): terminal blocks up, input header down.
+2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with two **M3 × 6** screws each, through its two top holes into the inserts: terminal blocks up, input header down.
 3. **Power switch:** stick the **Pololu** board onto its holder plate with double-sided foam tape, terminals facing out, and loop a zip tie through the two slots and across the board. It sits by the left wall, facing the centre, close to the power jack.
 4. **Buck converter:** drop it into its tray and strap it down with a zip tie through the two slots.
 
