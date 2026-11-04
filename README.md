@@ -4,10 +4,15 @@
 
 Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is; an Arduino Mega closes the loop a hundred times a second. It holds the ball dead centre, or steers it around a circle, a figure-8, a square, or a slow random wander.
 
+[![Watch it run: The best ball balancing plate (YouTube)](https://img.youtube.com/vi/2A9nScKkBSY/maxresdefault.jpg)](https://youtu.be/2A9nScKkBSY)
+
+**▶ [Watch it run on YouTube](https://youtu.be/2A9nScKkBSY)**
+
 ![The balancer, shell on](images/hero.png)
 
 | | |
 |---|---|
+| **Watch** | [The video on YouTube](https://youtu.be/2A9nScKkBSY) |
 | **Build** | [Assembly guide](assembly.md) (animated, step by step) · [Bill of materials](BOM/BOM.md) · [Wiring guide](wiring/README.md) with a [wire-by-wire video](https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e) |
 | **Files** | [3D-printable parts](stl/) · [CAD source](CAD/) · [Firmware](code/firmware/balance/balance.ino) · [Simulation](code/sim/) |
 | **Tune** | [Tuning guide](tuning.md): PID, centre and paths over the console, with a live top-down visualizer |
