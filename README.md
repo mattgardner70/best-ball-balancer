@@ -8,8 +8,6 @@ Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is;
 
 **▶ [Watch it run on YouTube](https://youtu.be/2A9nScKkBSY)**
 
-![The balancer, shell on](images/hero.png)
-
 | | |
 |---|---|
 | **Watch** | [The video on YouTube](https://youtu.be/2A9nScKkBSY) |
