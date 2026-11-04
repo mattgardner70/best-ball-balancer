@@ -1,6 +1,6 @@
 # Bill of materials
 
-About **$297** in parts at the listed prices, motors and motor drivers included. Links are the listings used for this build; equivalent parts work. **Price ea** is per item, or per pack where you buy a pack; **Total** is what you pay for that line.
+About **$306** in parts at the listed prices, motors and motor drivers included. Links are the listings used for this build; equivalent parts work. **Price ea** is per item, or per pack where you buy a pack; **Total** is what you pay for that line.
 
 ## Motion
 
@@ -20,6 +20,7 @@ About **$297** in parts at the listed prices, motors and motor drivers included.
 | Heatsinks, 9 × 9 × 5 mm aluminium, with 3M 8810 thermal tape | 8 | 1 pack of 20 | $6.99 | $6.99 | [Easycargo B079FQ22LK](https://www.amazon.com/dp/B079FQ22LK) |
 | Arduino Mega 2560 R3 | 1 | 1 | $22.99 | $22.99 | [ELEGOO B01H4ZDYCE](https://www.amazon.com/dp/B01H4ZDYCE) |
 | Cytron MDD3A dual motor driver, 4–16 V, 3 A/channel | 2 | 2 | $9.30 | $18.60 | [Cytron MDD3A](https://www.cytron.io/p-3amp-4v-16v-dc-motor-driver-2-channels) |
+| USB programming cable: USB-A to **left-angle** USB-B, 2 m (the left-angle plug fits in front of the upside-down Mega; the USB-A end comes out of the console) | 1 | 1 | $8.95 | $8.95 | [StarTech USBAB2ML](https://www.amazon.com/dp/B00GOBM6OC) |
 | 8.4" 4-wire resistive touch panel | 1 | 1 | $38.88 | $38.88 | [VSDISPLAY B07TZGVY8K](https://www.amazon.com/dp/B07TZGVY8K) |
 | Pololu #2813 pushbutton power switch (soft power) | 1 | 1 | $8.95 | $8.95 | [pololu.com #2813](https://www.pololu.com/product/2813) |
 | 12 V → 5 V buck converter, 3 A, sealed, pre-wired | 1 | 1 | $9.99 | $9.99 | [DROK B07P663XJV](https://www.amazon.com/dp/B07P663XJV) |
@@ -79,7 +80,8 @@ About **650 g** of PLA and about **30 hours** on a Bambu Lab P1S (every part fit
 | rod | 3 | PETG | [`rod.stl`](../stl/rod.stl) | Elbow eye with a pressed bronze bushing; M3 insert on top for the stud. |
 | plate_insert | 1 | white | [`plate_insert.stl`](../stl/plate_insert.stl) | Solid plate the glass sits on, with three nubs underneath for the ball joints and two clips to tuck the panel's tail. Print flat, nubs up. |
 | plate_rim | 1 | white | [`plate_rim.stl`](../stl/plate_rim.stl) | Outer wall and 0.25" lip; the insert slots in onto its step with a little super glue. Print flat. |
-| frame | 1 | white | [`frame.stl`](../stl/frame.stl) | Rim, console with the two buttons, power-jack tab and a dish for the spare ball. |
+| frame | 1 | white | [`frame.stl`](../stl/frame.stl) | Rim, console with the two buttons, power-jack tab, a hole for the USB cable and a dish for the spare ball. |
+| usb_sabot | 1 (two halves) | white | [`usb_sabot.stl`](../stl/usb_sabot.stl) | Clamps the USB cable in the frame's hole. Set `USB_CABLE_OD` in `CAD/enclosure.py` to your cable first (the STL is for 4.5 mm). |
 | lattice_shell_v2 | 1 | black | [`lattice_shell_v2.stl`](../stl/lattice_shell_v2.stl) | Voronoi shell over the mechanism. Prints top face down **without supports**: every wall opening has a pointed ceiling, never flatter than 60° from vertical. ([v1](../stl/lattice_shell_v1.stl) is the original free-form version, which needs supports.) |
 | liner | 1 | white | [`liner.stl`](../stl/liner.stl) | Optional solid inner shell: hides the mechanism and damps sound. |
 

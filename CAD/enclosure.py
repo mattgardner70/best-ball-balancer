@@ -50,6 +50,15 @@ POWER_TAB = (-55.0, 30.0, 36.0, 22.0)  # back of the frame: x, width, height, ja
 JACK_HOLE = 12.2                     # DC-099 pre-wired 5.5x2.1 panel jack: ~12 mm mounting hole
 CORD_NOTCH = (POWER_TAB[0], POWER_TAB[1] - 4.0, POWER_TAB[2] - 2.0)  # behind the tab: room for the jack body
 BUTTON_Z = 0.55 * 60.0               # button centre height on the console face
+# USB programming cable out through the console's right end: StarTech USBAB2ML (USB-A to left-angle USB-B,
+# 2 m; the left-angle B fits in front of the upside-down Mega's jack). Its USB-A plug passes out through the
+# hole; a split sabot clamps the cable and fills the hole, its flange inside against the wall.
+USB_PORT = (-105.5, 27.0)            # y, centre height: the inside face is flat, with free room behind, y -112.9 to -98
+USB_PLUG = (9.0, 18.0)               # any USB-A plug body (y x z, passed through on its side); StarTech's is 12.0 x 8.1
+USB_HOLE = (10.0, 20.0)              # y x z: room for any USB-A plug body
+USB_CABLE_OD = 4.5                   # NOT MEASURED: measure the cable and set this before printing the sabot
+SABOT_FIT, SABOT_GRIP = 0.2, 0.2     # clearance in the hole a side; the bore is this much under the cable
+SABOT_FLANGE = (14.0, 24.0, 2.0)     # inside the wall, y x z x thick: bears 2 mm all round the hole
 WIRE_NOTCH = (0.0, 30.0 + 26.0, BUTTON_Z + 13.0)  # front: room behind both buttons (bodies + terminals)
 SHELF_T = 9.0                        # the shelf lid (console top); thick enough under the deepest point of the dish
 SHELF_SEAT = 60.0 - SHELF_T          # console walls stop here; the lid sits on them, flush at the top
@@ -286,6 +295,10 @@ def frame() -> cq.Workplane:
                     .rect(w + 2, _shelf_back() - front + 1).extrude(CONSOLE_HIGH - SHELF_SEAT + 1))
     body = body.union(shelf())
 
+    # USB cable hole through the console's right end (the cable runs in through the front notch).
+    side = cq.Plane(origin=(w / 2, USB_PORT[0], USB_PORT[1]), xDir=(0, 1, 0), normal=(1, 0, 0))
+    body = body.cut(cq.Workplane(side).rect(*USB_HOLE).extrude(-2 * t, both=True).edges("|X").fillet(2.0))
+
     # Buttons on the console's vertical face.
     face = cq.Plane(origin=(0, front, BUTTON_Z), xDir=(1, 0, 0), normal=(0, -1, 0))
     return body.cut(cq.Workplane(face).pushPoints([(-BUTTON_PITCH / 2, 0), (BUTTON_PITCH / 2, 0)])
@@ -327,6 +340,27 @@ def dish_geometry():
 def _shelf_back():
     """The shelf's back edge: where the console meets the shell's pocket."""
     return -SHELL_D / 2 - FIT
+
+
+def usb_sabot(assembled=False) -> cq.Workplane:
+    """Split sabot for the USB cable hole. The USB-A plug goes out through the hole; the two halves clamp
+    the cable inside the console and slide out into the hole until the flange meets the inside of the wall.
+    A pull on the plug end presses the flange against the wall, so nothing has to snap.
+
+    Built along +x = outward: flange (inside) x 0..thick, body to 0.2 short of the outer face.
+    assembled=True: both halves in place round the cable (for fit checks); otherwise laid out split face
+    down, side by side, for printing."""
+    t = CRADLE_WALL
+    bw, bh = USB_HOLE[0] - 2 * SABOT_FIT, USB_HOLE[1] - 2 * SABOT_FIT
+    fw, fh, ft = SABOT_FLANGE
+    s = (cq.Workplane("YZ").rect(bw, bh).extrude(ft + t - 0.2).edges("|X").fillet(1.8)
+         .union(cq.Workplane("YZ").rect(fw, fh).extrude(ft).edges("|X").fillet(3.0)))
+    s = s.cut(cq.Workplane("YZ").circle(USB_CABLE_OD / 2 - SABOT_GRIP / 2).extrude(30, both=True))
+    top = s.intersect(cq.Workplane("XY").box(60, 60, 30, centered=(True, True, False)))
+    bot = s.intersect(cq.Workplane("XY").box(60, 60, 30, centered=(True, True, False)).mirror("XY"))
+    if assembled:
+        return top.union(bot)
+    return top.translate((0, -(fw / 2 + 3), 0)).union(bot.rotate((0, 0, 0), (1, 0, 0), 180).translate((0, fw / 2 + 3, 0)))
 
 
 def shelf() -> cq.Workplane:

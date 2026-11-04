@@ -181,13 +181,15 @@ def _chassis_geoms(have) -> str:
                 out.append(f'<geom type="mesh" mesh="{name}" pos="{_f(p[0], p[1], ch.BODY_Z / 1000)}" '
                            f'xyaxes="{_f(u[0], u[1], 0, t[0], t[1], 0)}" class="fixed" {white}/>')
     box = lambda c, half, rgba: f'<geom type="box" pos="{_f(*(v / 1000 for v in c))}" size="{_f(*(v / 1000 for v in half))}" class="fixed" rgba="{rgba}"/>'
-    mx, my = ch.MEGA_AT
+    my = ch.MEGA_CY
     L, H = ch.MEGA
-    bx = mx + 10.0 - 6.0 - 0.8
+    bx = ch.MEGA_FACE_X + 0.8
     zb = ch.PLATE_T + ch.MEGA_LIFT
+    s = -1 if ch.MEGA_FLIP else 1                    # upside down: back end <-> front end, top edge <-> bottom edge
+    up = (lambda h: H - h) if ch.MEGA_FLIP else (lambda h: h)
     out.append(box((bx, my, zb + H / 2), (0.8, L / 2, H / 2), "0.05 0.45 0.55 1"))                    # Mega, on edge
-    out.append(box((bx - 5, my - 10, zb + H - 4), (4, 35, 2.5), "0.1 0.1 0.1 1"))                    # digital header, top edge
-    out.append(box((bx - 6, my + L / 2 + 3, zb + 38.4), (5.5, 8, 6), "0.7 0.7 0.72 1"))               # USB-B, back end
+    out.append(box((bx - 5, my - s * 10, zb + up(H - 4)), (4, 35, 2.5), "0.1 0.1 0.1 1"))            # digital header
+    out.append(box((bx - 6, my + s * (L / 2 + 3), zb + up(38.4)), (5.5, 8, 6), "0.7 0.7 0.72 1"))     # USB-B
     # MDD3A drivers, back to back on the driver wall (terminals along the top edge).
     dl, dw = ch.MDD3A
     for side in (1, -1):

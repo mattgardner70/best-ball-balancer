@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 console.log
 CAD/previews/
+code/tools/console*.log
+code/tools/console.cmd

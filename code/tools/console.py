@@ -1,55 +1,86 @@
-"""Live serial console for the balancer.
+"""Serial console for the balancer: keeps the port open (every open resets the Mega), prints the log,
+and sends what you type.
 
-    uv run python code/tools/console.py [PORT]
+    uv run python -m tools.console [port]
 
-Shows everything the Mega prints (and logs it to console.log), unlocks the keys with the hello
-phrase, and sends whatever you type: `n` + Return for the next pattern, `P` to raise P, `k1`, and so
-on. An empty line does nothing; type `home` to send the re-home key. Ctrl-C to quit.
-Opening the port resets the Mega, so it homes again.
+Typing:
+    cx 21        a setting (any word + value): sent as the firmware command ":cx 21"
+    get          every setting      save  keep them through a reset      mode circle  switch pattern
+    n            a single character is sent as that key (n = next pattern, s = stop, ? = ball position)
+    home         re-home (Enter on its own does nothing, so a stray Enter can't re-home)
+
+Everything is also appended to tools/console.log, and lines appended to tools/console.cmd are sent
+as if typed (so another program can drive it while it runs).
 """
-
 import glob
+import pathlib
 import sys
 import threading
 import time
 
 import serial
 
+HERE = pathlib.Path(__file__).parent
+LOG, CMD = HERE / "console.log", HERE / "console.cmd"
 HELLO = b"~balancer-hello~"
 
 
-def find_port():
-    ports = sorted(glob.glob("/dev/cu.usbmodem*") + glob.glob("/dev/ttyACM*") + glob.glob("/dev/ttyUSB*"))
-    if not ports:
-        sys.exit("No Arduino found: plug in USB, or pass the port (e.g. COM3).")
-    return ports[0]
+def encode(line):
+    """What to send for one typed line."""
+    line = line.strip()
+    if not line:
+        return b""
+    if line == "home":
+        return b"\n"
+    if len(line) == 1:
+        return line.encode()
+    return b":" + line.lstrip(":").encode() + b"\n"
 
 
 def main():
-    port = sys.argv[1] if len(sys.argv) > 1 else find_port()
-    s = serial.Serial(port, 115200, timeout=0.1)
-    print(f"Connected to {port}. Type a key and press Return (Ctrl-C quits).")
-    time.sleep(2.5)                           # the Mega resets when the port opens
-    s.write(HELLO)
-    log = open("console.log", "a")
+    port = sys.argv[1] if len(sys.argv) > 1 else (sorted(glob.glob("/dev/cu.usbmodem*") + glob.glob("/dev/cu.usbserial*") + glob.glob("/dev/ttyACM*")
+                                                        + glob.glob("/dev/ttyUSB*")) or sys.exit("No Arduino found: plug in USB, or pass the port"))[0]
+    s = serial.Serial(port, 115200, timeout=0.05)
+    lock = threading.Lock()
+    log = open(LOG, "a", buffering=1)
+    t0 = time.time()
+
+    def send(data, why):
+        if data:
+            with lock:
+                s.write(data)
+            log.write(f"{time.time() - t0:8.2f} >>> {why}\n")
 
     def reader():
+        hello = False
         while True:
-            text = s.read(4096).decode(errors="replace")
-            if text:
-                sys.stdout.write(text); sys.stdout.flush()
-                log.write(text); log.flush()
-                if "Balancer." in text:      # it restarted on its own: unlock the keys again
-                    time.sleep(0.3); s.write(HELLO)
+            line = s.readline()
+            if line:
+                text = line.decode(errors="replace").rstrip()
+                if not text.startswith("V "):            # the viz stream goes to the log only
+                    print(text, flush=True)
+                log.write(f"{time.time() - t0:8.2f} {text}\n")
+            if not hello and time.time() - t0 > 2.5:      # after the bootloader: keys on
+                send(HELLO, "hello")
+                hello = True
+
+    def cmd_file():
+        CMD.write_text("")
+        done = 0
+        while True:
+            lines = CMD.read_text().splitlines()
+            for line in lines[done:]:
+                send(encode(line), line)
+                time.sleep(0.03)            # the Mega's input buffer is 64 bytes: a burst of lines overflows it
+            done = len(lines)
+            time.sleep(0.1)
 
     threading.Thread(target=reader, daemon=True).start()
+    threading.Thread(target=cmd_file, daemon=True).start()
+    print(f"{port}: the Mega resets on open, homes and raises. Type 'get' for the settings, Ctrl-C to quit.")
     try:
         for line in sys.stdin:
-            cmd = line.strip()
-            if cmd == "home":
-                s.write(b"\n")
-            elif cmd:
-                s.write(cmd.encode())
+            send(encode(line), line.strip())
     except KeyboardInterrupt:
         pass
 

@@ -10,6 +10,7 @@ Three geared motors tilt an 8.4" touch panel; the panel feels where the ball is;
 |---|---|
 | **Build** | [Assembly guide](assembly.md) (animated, step by step) · [Bill of materials](BOM/BOM.md) · [Wiring guide](wiring/README.md) with a [wire-by-wire video](https://github.com/user-attachments/assets/843bd77f-8e50-462b-997f-23ea67aadc6e) |
 | **Files** | [3D-printable parts](stl/) · [CAD source](CAD/) · [Firmware](code/firmware/balance/balance.ino) · [Simulation](code/sim/) |
+| **Tune** | [Tuning guide](tuning.md): PID, centre and paths over the console, with a live top-down visualizer |
 | **Power** | 12–20 W from a 12 V wall adapter |
 | **Time** | About 40 hours, most of it printing ([breakdown](#time-estimate)) |
 
@@ -23,7 +24,7 @@ Most ball balancers use hobby servos or steppers, and you can hear them from acr
 - **20 kHz PWM**, above the range of human hearing, so the motor drivers don't sing.
 - **Encoders on every motor**, so each arm moves smoothly to an exact angle instead of hunting.
 - **A damped enclosure:** a Voronoi lattice shell with an optional solid liner that hides the mechanism and soaks up what noise is left.
-- **A soft power button** (Pololu pushbutton switch) instead of a clicking toggle.
+- **A soft power button** (Pololu pushbutton switch) instead of a clicking toggle: a press lowers the arms slowly onto their stops before the power goes off.
 
 ## How it works
 
@@ -48,55 +49,21 @@ The balancer doesn't just hold the ball still: it can steer it along a path. Eac
 |---|---|
 | **Centre** | Sits still in the middle of the plate. |
 | **Circle** *(default)* | Rolls a 90 mm circle, one lap every 3.5 s. |
-| **Figure-8** | Traces a figure-8, 120 mm wide and 70 mm tall, one loop every 5.5 s. |
+| **Figure-8** | Traces a figure-8, 120 mm wide and 47 mm tall, one loop every 5.5 s. |
 | **Square** | Dashes between the corners of a 90 mm square, holding 1.5 s at each corner. |
 | **Wander** | Drifts slowly around the plate on a smooth, random-looking path. |
 
 It powers up in **circle**, and starts the moment a ball touches the panel. Each new mode glides out from the centre over 2 seconds rather than jumping.
 
-**Switching modes:** connect over USB and press `n` in the [console](code/tools/console.py) to step to the next mode (see [Talk to it](assembly.md#talk-to-it) for the other live keys). The MODE button on the console is already wired to the Mega (pin D30), ready for a firmware update that steps through the modes without a laptop.
+**Switching modes:** press the blue MODE button to step to the next mode, or type `mode figure-8` (or `n`) in the [console](code/tools/console.py).
 
-## Tuning the PID
+**The ball doesn't follow a path exactly.** Left alone it cuts inside: the circle comes out smaller and slightly triangular, and the figure-8's loops pull in. Each pattern's target therefore runs a hand-tuned path, reshaped where the ball cuts in, so that the ball traces the shape you want. See the [tuning guide](tuning.md).
 
-The ball loop is a PID controller: it looks at where the ball is and how fast it's moving, and decides how far to tilt the plate. Three gains set its personality, and all three can be changed live over USB while the ball is rolling.
+## Tuning
 
-| Gain | What it does here | Too low | Too high | Saved value |
-|---|---|---|---|---|
-| **P** (proportional) | Tilts harder the further the ball is from its target | Lazy: the ball drifts to the edges | Overshoots and circles the centre | 6.08 |
-| **I** (integral) | Slowly builds up tilt to cancel a steady lean, so the ball settles exactly on target | Ball rests a few mm off centre | Slow, swinging overshoot | 9.23 |
-| **D** (derivative) | Brakes the ball in proportion to its speed | Overshoots, wobbles | Jittery, twitchy plate | 3.02 |
+Everything is tuned live over USB while the ball rolls, and kept with `save`: the PID gains, where the plate's centre is, the leg trims, and the shape of each pattern's path. A live top-down visualizer shows the ball, its target and the goal shape. The [tuning guide](tuning.md) walks through it.
 
-### How to tune it
-
-Connect the [console](code/tools/console.py) and type keys while it balances. Each press changes a gain by 15%, and `v` shows the current values.
-
-| Keys | Change |
-|---|---|
-| `P` / `p` | P up / down |
-| `I` / `i` | I up / down (`0` turns I off) |
-| `D` / `d` | D up / down |
-| `M` / `m` | Motor damping up / down (how firmly each arm settles on its angle) |
-
-1. **Level it first.** With the ball parked at the centre, the plate shouldn't need to lean. If the status line shows a steady tilt, trim the legs (`1` `2` `3` raise a leg, `!` `@` `#` lower it). Tuning gains can't fix a crooked plate.
-2. **Turn I off** (`0`), so you see P and D on their own.
-3. **Raise P** until the ball comes back briskly from the edge, even if it overshoots a little.
-4. **Raise D** until a push settles with one small overshoot and no wobble. Too much D makes the plate twitch.
-5. **Bring I back** (`I`) until the ball settles right on target instead of a few mm off.
-6. **Test it moving:** step to circle or square with `n`.
-   - If it lags behind the path, raise the feed-forward lead with `>`.
-   - If it drifts sideways along the straight edges, turn the tilt command a couple of degrees with `[` or `]`.
-   - If the whole pattern sits off-centre, move the centre with `a` `f` `w` `z`.
-7. **Save it.** Live changes last until power-off. Write the values you like into the top of [`balance.ino`](code/firmware/balance/balance.ino) (`BALL_KP`, `BALL_KI`, `BALL_KD`) and upload.
-
-### What it looks like when it's off
-
-| Symptom | Try |
-|---|---|
-| Ball orbits or oscillates around the centre | D up, or P down |
-| Weak at the edges, ball reaches the rim | P up |
-| Settles a few mm off centre | I up, or re-level the legs |
-| Plate twitches or buzzes at rest | D down, or M down |
-| Jumps right at the panel's edges | Keep patterns inside the panel: readings get unreliable at the very edge |
+![Figure-8 with a tuned path: the target (black) runs a reshaped path so that the ball (blue) traces the goal (orange)](images/tuning/figure-8-after.png)
 
 ## The story
 
@@ -121,19 +88,22 @@ Things always go wrong. Some highlights:
 - **A homing routine that lied.** The three arms are linked through the plate, so one arm could stop against the plate's weight and look "home" while another was still high. Homing now finishes with a joint push-down.
 - **A loose encoder wire.** It came loose twice and sent an arm to full extension. It's glued now, and the firmware rests a motor whose encoder goes silent under full power.
 - **"It only shakes when USB is unplugged."** A flight recorder in EEPROM, read back after each unplugged run, ruled out resets, phantom touches and serial noise one by one, then caught the real bug: a "full power" mode meant only for the start-up raise was still switched on while balancing. Fixed, it runs the same with or without USB.
+- **A board that froze.** With the encoders' 5 V off, their inputs picked up noise and fired interrupts so fast the Mega locked up mid-start. The firmware now spots an encoder flooding, switches that motor off and says so in the log, and checks every pin at boot.
 - **The jitter hunt.** A 100 Hz data stream showed three culprits: single-frame glitches from the touch panel (now rejected), a loop that ran 50% slower than it assumed (now measured), and EEPROM writes stalling the motors once a second (removed).
 
 ### 5. Tune it
 
-Gains were tuned live over serial, one keypress at a time, then saved. Leg trims level the plate, a feed-forward term with a small lead lets the ball follow moving targets, and a rotation trim cancels sideways drift. The result holds the ball within a few millimetres of centre.
+Gains were tuned live over serial, then saved. Leg trims level the plate, a feed-forward term with a small lead lets the ball follow moving targets, and a rotation trim cancels sideways drift. The result holds the ball within a few millimetres of centre.
 
-![The driver wall and the Mega, beside the motors](images/driver_wall.png)
+Moving patterns were harder: however the gains were set, the ball cut inside the path. A learning controller (it corrects the target lap by lap) fixed the shape but made the plate loud. Hand-tuned paths, drawn and corrected against the live visualizer, did it quietly: the figure-8 now runs 3 mm off its goal on average.
+
+![The finished build](images/built.jpg)
 
 ---
 
 ## Requirements
 
-**Hardware:** everything is in the [bill of materials](BOM/BOM.md): about $297 of parts including the three GA37-520 gearmotors and two Cytron MDD3A drivers, and about 650 g of PLA/PETG.
+**Hardware:** everything is in the [bill of materials](BOM/BOM.md): about $306 of parts including the three GA37-520 gearmotors and two Cytron MDD3A drivers, and about 650 g of PLA/PETG.
 
 **Tools:** a 3D printer (every part fits a 256 mm bed), a soldering iron (about 10 joints), a heat-set insert tip, a multimeter and hex keys.
 
@@ -188,7 +158,7 @@ uv run python -m CAD.build
 | [`CAD/`](CAD/) | CadQuery source for every part ([`build.py`](CAD/build.py) exports them all) |
 | [`code/firmware/`](code/firmware/) | The balancer firmware, plus four bring-up test sketches |
 | [`code/sim/`](code/sim/) | MuJoCo model, controller and interactive viewer |
-| [`code/tools/`](code/tools/) | A serial console for live tuning, and the scripts that render the assembly animations and the wiring video |
+| [`code/tools/`](code/tools/) | The serial console, the live visualizer and the path tool for [tuning](tuning.md), and the scripts that render the assembly animations and the wiring video |
 | [`BOM/`](BOM/BOM.md) | Bill of materials with links |
 | [`wiring/`](wiring/README.md) | Wiring guide, and the diagram and wire list (PDF) |
 | [`assembly.md`](assembly.md) | Step-by-step build guide, with an animation for each stage |

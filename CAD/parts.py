@@ -59,7 +59,7 @@ def _holder_dims():
 
 LEDGE = 6.0                          # (used to place the joints' reach; the insert itself is solid)
 FPC_SLOT = (4.0, 30.0)               # the panel's tail goes down through the insert here, by the -x short side
-RIBBON_CLIP = (18.0, 1.8)            # bridges under the insert that hold the tail flat: opening width, gap (measure your tail)
+RIBBON_CLIP = (18.0, 4.7)            # bridges under the insert that hold the tail flat: opening width, gap (measure your tail)
 RIBBON_CLIP_X = (22.0, 48.0)         # their distance in from the tail slot, along +x
 INSERT_FIT = 0.2                     # per side, insert inside the rim
 STEP = 1.5                           # the rim's inward step the insert sits on (glued)

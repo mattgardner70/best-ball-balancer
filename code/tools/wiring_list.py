@@ -67,10 +67,10 @@ CONNECTIONS = [
     # --- motors: drivers -> motors ----------------------------------------------------------
     ("motors", "MD1", "M1A", "M1", "1 M+", "mot+"),
     ("motors", "MD1", "M1B", "M1", "6 M−", "mot-"),
-    ("motors", "MD1", "M2A", "M2", "1 M+", "mot+"),
-    ("motors", "MD1", "M2B", "M2", "6 M−", "mot-"),
-    ("motors", "MD2", "M1A", "M3", "1 M+", "mot+"),
-    ("motors", "MD2", "M1B", "M3", "6 M−", "mot-"),
+    ("motors", "MD1", "M2A", "M3", "1 M+", "mot+"),
+    ("motors", "MD1", "M2B", "M3", "6 M−", "mot-"),
+    ("motors", "MD2", "M1A", "M2", "1 M+", "mot+"),
+    ("motors", "MD2", "M1B", "M2", "6 M−", "mot-"),
     # --- motors: encoders -> Mega -----------------------------------------------------------
     ("motors", "M1", "3 A", "MEGA", "D2", "encA"),
     ("motors", "M1", "4 B", "MEGA", "D19", "encB"),
@@ -79,10 +79,10 @@ CONNECTIONS = [
     ("motors", "M3", "3 A", "MEGA", "D18", "encA"),
     ("motors", "M3", "4 B", "MEGA", "D21", "encB"),
     # --- touch panel ------------------------------------------------------------------------
-    ("inputs", "FPC", "1 Y−", "MEGA", "A3", "touch"),
-    ("inputs", "FPC", "2 X−", "MEGA", "A2", "touch"),
-    ("inputs", "FPC", "3 Y+", "MEGA", "A1", "touch"),
-    ("inputs", "FPC", "4 X+", "MEGA", "A0", "touch"),
+    ("inputs", "FPC", "1 Y−", "MEGA", "A0", "touch"),
+    ("inputs", "FPC", "2 X−", "MEGA", "A1", "touch"),
+    ("inputs", "FPC", "3 Y+", "MEGA", "A2", "touch"),
+    ("inputs", "FPC", "4 X+", "MEGA", "A3", "touch"),
     # --- buttons and soft power ---------------------------------------------------------------
     ("inputs", "BTNP", "NO", "SW", "A", "btn"),
     ("inputs", "BTNP", "NC", "MEGA", "D31", "btn"),
@@ -94,7 +94,7 @@ NAMES = {
     "ADAPTER": "12 V 5 A wall adapter", "JACK": "Panel jack (frame back tab)", "SW": "Pololu #2813 soft power switch",
     "P12a": "Wago +12 V (A)", "P12b": "Wago +12 V (B)", "P5a": "Wago +5 V",
     "G1": "Wago GND (1)", "G2": "Wago GND (2)", "G3": "Wago GND (3)", "G4": "Wago GND (4)",
-    "BUCK": "DROK 12→5 V buck", "MEGA": "Arduino Mega 2560", "MD1": "Cytron MDD3A #1 (motors 1, 2)",
-    "MD2": "Cytron MDD3A #2 (motor 3)", "M1": "Motor 1 (leg 0°)", "M2": "Motor 2 (leg 120°)", "M3": "Motor 3 (leg 240°)",
+    "BUCK": "DROK 12→5 V buck", "MEGA": "Arduino Mega 2560", "MD1": "Cytron MDD3A #1 (motors 1, 3)",
+    "MD2": "Cytron MDD3A #2 (motor 2)", "M1": "Motor 1 (leg 0°)", "M2": "Motor 2 (leg 120°)", "M3": "Motor 3 (leg 240°)",
     "BTNP": "POWER button", "BTNM": "MODE button", "FPC": "Touch-panel tail connector",
 }

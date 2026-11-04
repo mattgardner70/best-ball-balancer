@@ -35,6 +35,7 @@ INSERT_WALL = 2.6                    # plastic all round each heat-set insert
 STRAP_T, EAR_T = 3.0, 4.0
 STRAP_PRELOAD = 2.5                  # the arch is flattened this much: snug on the motor, the ears still float
                                      # 2.5 mm over the saddle, so the screws pull the strap down and it springs tight
+STRAP_GUSSET = 3.0                   # 45 deg fillet where the arch meets the ears (a gearbox strap cracked there)
 SCREW_HEAD_R = 3.1                   # M3 socket head + clearance
 WRENCH_CLEAR = 7.5                   # screw centre to the arch: room for an open-end wrench on an M3 nut/hex head
 GEARBOX_SADDLE = (MOTOR_FACE - 3.0, MOTOR_FACE - hw.GA37_GEARBOX[1] + 2.0)      # t0, t1 along the tangent
@@ -45,6 +46,13 @@ MEGA_AT = (88.0, 20.0)               # standing on edge, board along y, parts fa
 MEGA_LIFT = 9.0                      # board's bottom edge above the plate: room for the Dupont plugs below it
                                      # (the liner's inside top, ~67.4 mm, caps it: board top 66.3)
 MEGA = (101.6, 53.3)
+# The board sits upside down (turned 180 deg in its own plane: digital header along the bottom, USB at the
+# front end) so the end facing arm 1 carries no plugs: 10 mm from anything that moves in any reachable pose
+# (tools/mega_fit). Same pads (MEGA_AT, _mega_tabs) and height; only the holder changed.
+MEGA_FLIP = True
+MEGA_FACE_X, MEGA_CY = 94.4, 31.0    # component face (PCB behind it, 1.6), board centre along y
+MEGA_STANDOFF = 4.0                  # 4 mm standoffs on a 4 mm wall (was 6 + 6), same back plane: board 4 mm further out
+MEGA_WALL_Y = (-8.1, 73.9)           # wall ends: a driver still reaches the back pad past the board's end
 MEGA_HOLES = [(13.97, 2.54), (15.24, 50.8), (66.04, 7.62), (66.04, 35.56), (90.17, 50.8), (96.52, 2.54)]
 # Arduino Mega 2560 R3 holes, mm, seen from the component side: x from the USB / power-jack edge, y up from
 # the analog / power header edge (verified against SparkFun's ARDUINO_MEGA footprint).
@@ -144,6 +152,15 @@ def motor_strap(radius, length) -> cq.Workplane:
            .cut(cq.Workplane("XY").rect(4 * a_out, 4 * a_out).extrude(-2 * a_out)))
     ears = (cq.Workplane("XY").rect(2 * half, length).extrude(EAR_T)
             .cut(cq.Workplane("XZ").ellipse(a_in, b_in).extrude(length, both=True)))
+    # 45 deg gusset in each arch/ear corner: its slope runs from STRAP_GUSSET out along the ear top
+    # up into the middle of the arch wall, so it fuses into the arch instead of touching it at a line.
+    zt, g = EAR_T, STRAP_GUSSET
+    xa = a_out * math.sqrt(1 - (zt / b_out) ** 2)                   # arch outer face at the ear top
+    z1 = zt + g + 1
+    xm = (a_in * math.sqrt(1 - (z1 / b_in) ** 2) + a_out * math.sqrt(1 - (z1 / b_out) ** 2)) / 2   # mid-wall
+    for sgn in (-1, 1):
+        tri = [(sgn * (xa + g), zt), (sgn * xm, zt + xa + g - xm), (sgn * xm, zt - 0.5), (sgn * (xa + g), zt - 0.5)]
+        ears = ears.union(cq.Workplane("XZ").polyline(tri).close().extrude(length / 2, both=True))
     body = arc.union(ears).translate((0, 0, STRAP_PRELOAD))
     try:
         body = body.edges("|Y").fillet(0.8)
@@ -235,11 +252,14 @@ def _attach(body, a, tab):
 
 
 def _mega_holes():
-    """(along y from the board's -y end, up from its bottom edge) for each hole. The board stands with its
-    component side facing the centre (-x): seen from there, +y is to the LEFT, so the drawing's x runs
-    toward -y. USB / power-jack edge at the +y (back) end, analog / power header along the bottom."""
+    """(world y, up from the board's bottom edge) for each hole. The board stands with its component side
+    facing the centre (-x): seen from there, +y is to the LEFT, so the drawing's x runs toward -y. Right
+    way up: USB / power-jack edge at the +y (back) end, analog / power header along the bottom. Upside
+    down (MEGA_FLIP): USB at the -y (front) end, digital header along the bottom."""
     L, H = MEGA
-    return [(L - hx, hy) for hx, hy in MEGA_HOLES]
+    if MEGA_FLIP:
+        return [(MEGA_CY - L / 2 + hx, H - hy) for hx, hy in MEGA_HOLES]
+    return [(MEGA_CY + L / 2 - hx, hy) for hx, hy in MEGA_HOLES]
 
 
 def _mega_tabs():
@@ -251,37 +271,36 @@ def _mega_tabs():
 
 
 def mega_mount() -> cq.Workplane:
-    """Upright 4 mm wall for the Mega (standing on edge, parts facing the centre), four insert standoffs,
-    a ledge to rest the board on while starting the screws, and two screw tabs. World position;
-    print lying on its back (standoffs up)."""
-    x0, y0 = MEGA_AT
-    wall_x = x0 + 10.0
+    """Upright 4 mm wall for the Mega (standing on edge, parts facing the centre, upside down), four insert
+    standoffs on the holes that end up low and mid-board, a ledge the board's bottom edge rests on while
+    starting the screws, and six screw tabs on the printed pads. World position; print lying on its back
+    (standoffs up)."""
     L, H = MEGA
     z_board = PLATE_T + MEGA_LIFT
     top = z_board + H
+    pcb_back = MEGA_FACE_X + 1.6
+    wall_x = pcb_back + MEGA_STANDOFF
     back = _mega_tabs()[0][0] + TAB_W / 2         # back face flush with the end tabs (centred on the printed pads)
-    wall = (cq.Workplane("XY").workplane(offset=PLATE_T).center((wall_x + back) / 2, y0).rect(back - wall_x, L + 8)
-            .extrude(top - PLATE_T).edges("|X and >Z").fillet(2))   # 6 mm thick: no gussets behind it, prints flat
-    standoff = 6.0
-    for hx, hy in _mega_holes():
-        if hy > H - 6.0:      # the two holes at the top edge: their inserts would break out of the wall's top
-            continue          # (the liner caps the height), so the board takes 4 screws plus the ledge
-        y, z = y0 - L / 2 + hx, z_board + hy
-        st = (cq.Workplane("YZ", origin=(wall_x, 0, 0)).center(y, z).circle(3.5).extrude(-standoff)
-              .cut(cq.Workplane("YZ", origin=(wall_x - standoff, 0, 0)).center(y, z).circle(INSERT_M3[0] / 2)
-                   .extrude(INSERT_M3[1])))
-        wall = wall.union(st)
-    wall = wall.intersect(cq.Workplane("XY").rect(1000, 1000).extrude(top))
-    # The ledge the board's bottom edge rests on: a solid block back to the wall (it used to float in
-    # front of it, held only by the base plate). All below the board, so its plugs stay clear.
-    ledge_x0 = wall_x - standoff - 3.0
-    ledge = (cq.Workplane("XY").workplane(offset=PLATE_T).center((ledge_x0 + wall_x) / 2 + 0.25, y0)
-             .rect(wall_x - ledge_x0 + 0.5, L - 10).extrude(MEGA_LIFT))
+    y0, y1 = MEGA_WALL_Y
+    wall = (cq.Workplane("XY").workplane(offset=PLATE_T).center((wall_x + back) / 2, (y0 + y1) / 2).rect(back - wall_x, y1 - y0)
+            .extrude(top - PLATE_T).edges("|X and >Z").fillet(2))
+    holes = [(y, z_board + up) for y, up in _mega_holes() if up < H - 6.0]   # the two at the top edge: their
+    for y, z in holes:                            # inserts would break out of the wall's top (the liner caps it)
+        wall = wall.union(cq.Workplane("YZ", origin=(wall_x, 0, 0)).center(y, z).circle(3.5).extrude(-MEGA_STANDOFF))
+    # The board's bottom edge rests on a solid ledge back to the wall; it runs forward far enough to carry
+    # the front tab at y -20. All below the board, so its plugs stay clear.
+    ledge_x0 = MEGA_FACE_X - 3.0
+    ly0 = min(y for _, y in _mega_tabs()[2:]) - TAB_W / 2
+    ledge = (cq.Workplane("XY").workplane(offset=PLATE_T).center((ledge_x0 + wall_x) / 2 + 0.25, (ly0 + y1) / 2)
+             .rect(wall_x - ledge_x0 + 0.5, y1 - ly0).extrude(MEGA_LIFT))
     wall = wall.union(ledge)
     for x, y in _mega_tabs()[:2]:                    # tabs off the wall's ends, flush with its back
-        wall = _attach(wall, (x, y0 + (1 if y > y0 else -1) * (L / 2 + 4)), (x, y))
+        wall = _attach(wall, (x, y1 if y > MEGA_CY else y0), (x, y))
     for x, y in _mega_tabs()[2:]:                    # low front tabs off the ledge (all below the board, z < 13)
-        wall = _attach(wall, (wall_x - standoff - 3.0, y), (x, y))
+        wall = _attach(wall, (ledge_x0, y), (x, y))
+    # Insert holes after the union (the wall behind a 4 mm standoff would otherwise fill them): full depth.
+    for y, z in holes:
+        wall = wall.cut(cq.Workplane("YZ", origin=(pcb_back, 0, 0)).center(y, z).circle(INSERT_M3[0] / 2).extrude(INSERT_M3[1]))
     return wall.cut(_pad_clearance(_mega_tabs()))
 
 

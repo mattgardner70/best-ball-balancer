@@ -21,11 +21,15 @@ for k,h in parts.items():
         chk(not h.isInside(V(x,y,top+c.TAB_T/2)) and not h.isInside(V(x,y,top+0.3)), f"screw hole open over pad ({x},{y})")
         chk(all(h.isInside(V(x+2.6*np.cos(a),y+2.6*np.sin(a),top+0.6)) for a in np.linspace(0,2*np.pi,12,endpoint=False)), f"tab sits solid on pad ({x},{y})")
         chk(not any(h.isInside(V(x+dx,y+dy,top-1.0)) for dx in (-4,0,4) for dy in (-4,0,4)), f"nothing reaches into pad ({x},{y})")
-m=parts["mega"]; L=101.6; x0,y0=c.MEGA_AT; face=x0+10-6
-for hx,hy in [(13.97,2.54),(66.04,7.62),(66.04,35.56),(96.52,2.54)]:
-    y,z=y0+L/2-hx, c.PLATE_T+c.MEGA_LIFT+hy
-    chk((not m.isInside(V(face+0.5,y,z))) and all(m.isInside(V(face+0.5,y+3*np.cos(a),z+3*np.sin(a))) for a in np.linspace(0,6.28,8,endpoint=False)), f"Mega hole {(hx,hy)} on an insert standoff")
-board=cq.Workplane("XY").box(1.6,L,53.34,centered=(False,True,False)).translate((face-1.6,y0,c.PLATE_T+c.MEGA_LIFT)).val()
+m=parts["mega"]; L,H=c.MEGA; face=c.MEGA_FACE_X+1.6; zb=c.PLATE_T+c.MEGA_LIFT
+for y,up in c._mega_holes():
+    z=zb+up
+    if up>H-6.0:
+        chk(not m.isInside(V(face+0.5,y,z)), f"Mega hole at y {y:.1f} z {z:.1f} (top edge, unused) clear")
+        continue
+    chk((not m.isInside(V(face+0.5,y,z))) and all(m.isInside(V(face+0.5,y+3*np.cos(a),z+3*np.sin(a))) for a in np.linspace(0,6.28,8,endpoint=False)), f"Mega hole at y {y:.1f} z {z:.1f} on an insert standoff")
+    chk(all(not m.isInside(V(face+dx,y,z)) for dx in np.arange(0.3,c.INSERT_M3[1],0.5)) and m.isInside(V(face+c.INSERT_M3[1]+0.4,y,z)), f"  insert hole {c.INSERT_M3[1]:.0f} mm deep with a floor behind it")
+board=cq.Workplane("XY").box(1.6,L,H,centered=(False,True,False)).translate((face-1.6,c.MEGA_CY,zb)).val()
 chk(board.intersect(m).Volume()<0.01, "Mega board itself clear of the holder")
 d=parts["driver"]
 for side in (1,-1):

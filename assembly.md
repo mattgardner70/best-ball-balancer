@@ -31,6 +31,7 @@ All files are in [`stl/`](stl/). PLA is fine everywhere; PETG is better for the 
 | [`plate_insert`](stl/plate_insert.stl) | 1 | Flat, nubs up |
 | [`plate_rim`](stl/plate_rim.stl) | 1 | Flat |
 | [`frame`](stl/frame.stl) | 1 | Open side down, supports under the console top |
+| [`usb_sabot`](stl/usb_sabot.stl) | 1 (two halves) | Split face down. Measure your USB cable's thickness first and set `USB_CABLE_OD` in [`CAD/enclosure.py`](CAD/enclosure.py) (the STL is for 4.5 mm) |
 | [`lattice_shell_v2`](stl/lattice_shell_v2.stl) | 1 | Top face down, no supports needed ([v1](stl/lattice_shell_v1.stl) is the original, which needs supports) |
 | [`liner`](stl/liner.stl) (optional) | 1 | Top face down |
 
@@ -73,7 +74,7 @@ Each leg goes together on its motor, in this order:
 
 Every board has its own printed holder. **Screw each holder down first** with **M3 × 8** screws into the pads on the base plate (some of the screws sit under where the board goes), then mount its board.
 
-1. **Arduino Mega:** screw it to its holder with four **M3 × 6** screws, USB end toward the back. It stands 9 mm off the floor so the plugs on its bottom header have room. Use a **right-angle USB-B cable**: there isn't room for a straight plug with the shell on.
+1. **Arduino Mega:** it mounts **upside down** on its holder, components facing the centre, USB end toward the front, clear of the moving arms. Screw the holder down first (the board's end sits over one of its pads), then the board with four **M3 × 6** screws into the holder's inserts (two of them have little straight room: use a short hex key). Plug in the **left-angle USB-B cable** (StarTech USBAB2ML) now: there isn't room for a straight plug.
 2. **Motor drivers:** stick **4 heatsinks** on each MDD3A, one on each of the four small 8-pin chips beside the terminal blocks (the tape comes on them). Then screw the boards back to back onto the driver holder, one on each face, with two **M3 × 6** screws each, through its two top holes into the inserts: terminal blocks up, input header down.
 3. **Power switch:** stick the **Pololu** board onto its holder plate with double-sided foam tape, terminals facing out, and loop a zip tie through the two slots and across the board. It sits by the left wall, facing the centre, close to the power jack.
 4. **Buck converter:** drop it into its tray and strap it down with a zip tie through the two slots.
@@ -98,11 +99,12 @@ Before connecting the motors, power it once and check with a meter: 12 V on the 
 
 1. **Buttons:** push the two buttons in through the console face (red POWER on the left, blue MODE on the right) and tighten their nuts from behind.
 2. **Jack:** fit the barrel jack into the frame's back tab from outside.
-3. **Base into the frame:** lower the wired base into the frame.
-4. **Shell:** lower the liner (optional) and the lattice shell over the mechanism, with the three rods coming up through the slots in the top.
-5. **Plate:** slot the insert into the rim (it rests on the rim's step) with a few drops of super glue. Feed the panel's tail down through the slot in the insert, fold it back flat under the two clips, and lay the glass in.
-6. **Plate onto the joints:** screw the plate's three nubs onto the ball joints.
-7. **Ball:** set the ball on the panel, and the spare in the console dish.
+3. **USB cable:** before the base goes in, pass the cable's USB-A plug out through the hole in the console's right end, from inside. Clamp the two `usb_sabot` halves round the cable just inside, and slide them out into the hole until the flange meets the wall. The plug stays outside for programming. As the base goes in, run the cable along the front wall and through the front notch.
+4. **Base into the frame:** lower the wired base into the frame.
+5. **Shell:** lower the liner (optional) and the lattice shell over the mechanism, with the three rods coming up through the slots in the top.
+6. **Plate:** slot the insert into the rim (it rests on the rim's step) with a few drops of super glue. Feed the panel's tail down through the slot in the insert, fold it back flat under the two clips, and lay the glass in.
+7. **Plate onto the joints:** screw the plate's three nubs onto the ball joints.
+8. **Ball:** set the ball on the panel, and the spare in the console dish.
 
 ## 8. Bring it to life
 
@@ -120,30 +122,38 @@ Power on. The balancer will:
 
 ### Talk to it
 
-Connect over USB at 115200 baud. The easiest way is the console: it finds the Mega, unlocks the keys, shows the live status and logs it to `console.log`. Type a key and press Return.
+Connect over USB at 115200 baud with the console: it finds the Mega, unlocks the keys and shows the log. Opening the port resets the Mega, so it homes again.
 
 ```sh
 uv run python code/tools/console.py
+uv run python code/tools/viz.py            # optional, in a second terminal: live top-down view
 ```
 
-In the Arduino Serial Monitor instead, set **No line ending** and send `~balancer-hello~` once to unlock the keys.
+Type a setting and a value (`kp 6.5`, `mode square`), `get` to see them all and `save` to keep them, or a single key:
 
-| Key | Does |
+| Type | Does |
 |---|---|
-| `n` | Next pattern: centre, circle, figure-8, square, wander |
-| `P` `p` / `I` `i` / `D` `d` | Raise / lower each gain by 15% (`v` shows them) |
-| `1` `2` `3` / `!` `@` `#` | Raise / lower one leg's trim by 0.5° |
-| `a` `f` / `w` `z` | Move the target centre ±3 mm (toward / away from motor 1, toward motor 2 / motor 3) |
-| `l` / `b` / `s` | Level the plate / balance / stop all motors |
-| `home` | Home again (in the Serial Monitor: send a newline) |
+| `mode <name>` / `n` | Pattern: centre, circle, figure-8, square, wander (the MODE button steps too) |
+| `kp` `ki` `kd` | Ball gains (`v` shows them) |
+| `cx` `cy` | Where the plate's centre is, mm |
+| `t1` `t2` `t3` | Leg trims, degrees up |
+| `?` | Where the ball is |
+| `park` / `home` | Arms down slowly, motors off / home and raise again |
+| `s` | Stop all motors at once |
+
+Every command: [code/tools/README.md](code/tools/README.md). In the Arduino Serial Monitor instead, set **No line ending**, send `~balancer-hello~` once, then type commands with a leading `:` and a newline (`:kp 6.5`).
 
 ### Calibrate
 
-1. **Panel axes:** rest the ball (by its own weight, not held down) over motor 1 and send `k1`; repeat for `k2` and `k3`. This sets which way is which and where the centre is.
-2. **Level:** with the ball parked at the centre, watch the tilt in the status line. If the plate has to lean to hold it there, trim the legs with `1` `2` `3` until it doesn't.
-3. **Gains:** start from the saved values. If it overshoots, raise D; if it's lazy at the edges, raise P; if it settles off-centre, raise I a little.
+The [tuning guide](tuning.md) has the details.
 
-Once you like a setting, write it into [`balance.ino`](code/firmware/balance/balance.ino) and upload: live changes last until power-off.
+1. **Panel axes:** rest the ball (by its own weight, not held down) over motor 1 and send `k1`; repeat for `k2` and `k3`.
+2. **Level:** put an inclinometer on the plate, pointing at each motor in turn, and raise the low legs with `t1` `t2` `t3` until it reads level.
+3. **Centre:** hold the ball at the plate's physical centre, type `?`, and set `cx` `cy` to what it reads.
+4. **Gains and paths:** start from the defaults; see the [tuning guide](tuning.md).
+5. **`save`.** Settings are kept in the Mega's EEPROM, through power-off and firmware updates.
+
+**Before uploading new firmware, type `park`:** the reset drops the plate, and the ball is heavy enough to damage things nearby.
 
 ### When things go wrong
 
@@ -155,3 +165,6 @@ Once you like a setting, write it into [`balance.ino`](code/firmware/balance/bal
 | Jitter near the edges | Ball is beyond the panel's active area; keep patterns inside it |
 | The ball "isn't seen" | Panel tail wires: A0–A3, see the wiring diagram |
 | A motor driver runs hot | Check its heatsinks are on; run without the liner for more airflow |
+| "encoder fault" at power-up, nothing moves | The log names the motor and the wire. All six encoder wires low and flooding = no 5 V to the encoders (check the buck converter and the 5 V bus) |
+| The POWER button cuts power without parking | Its C contact must go to ground and NO to the Pololu's A pin; NC goes to D31. The log says "armed" once D31 reads right |
+| The ball doesn't trace the pattern | Expected: tune the pattern's path ([tuning guide](tuning.md#4-tune-the-paths)) |
